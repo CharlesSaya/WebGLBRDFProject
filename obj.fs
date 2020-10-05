@@ -22,22 +22,42 @@ vec3 lambert( vec3 lightPower, vec3 kD ,vec3 normale,vec3 wi){
 
 // =====================================================
 
-float fresnel(vec3 wi,vec3 wo, vec3 normale, float n){
-	float c = dot(wi,normale);
+float fresnel(vec3 wi,vec3 halfVector, float n){
+
+	float c = dot(wi,halfVector);
 	float g = sqrt(n*n + c * c -1.0);
 	float a = 0.5 * (g-c)*(g-c) / ((g+c)*(g+c));
-	float b = (c*(g+c)-1.0) * (c*(g+c)-1.0) / ( (c*(g-c) +1.0) * (c*(g-c) +1.0) );
-	return (a * (1.0+b) ) ;
+	float b = (c*(g+c)-1.0) * (c*(g+c)-1.0) / ( (c*(g-c) +1.0) * (c*(g-c) +1.0));
+	return (a * (1.0+b) ) ;	
+}
+
+// =====================================================
+
+float beckmann(vec3 wi, vec3 halfVector, float rugosity ){
+	float theta = dot(wi,halfVector);
+	float a = exp(-tan(theta)*tan(theta)/(2.0*rugosity*rugosity));
+	float b = M_PI * rugosity * rugosity * pow(cos(theta),4.0);
+	return a/b;
+}
+
+
+// =====================================================
+
+float cook_torrance(vec3 normale, vec3 halfVector, vec3 wi, vec3 wo){
+	float a = 2.0 * dot(normale,halfVector) * dot(normale,wo) /(dot(wo,halfVector));
+	float b = 2.0 * dot(normale,halfVector) * dot(normale,wi) /(dot(wi,halfVector));
+	return min(1.0,min(a,b));
 }
 
 // =====================================================
 void main(void)
 {
-	vec3 wi = normalize(uLightPos - vec3(pos3D));
-	vec3 wo = normalize(vec3(0.0) - vec3(pos3D));
-	vec3 m = normalize(wi + wo);
-	// vec3 col = lambert(uLightPower,uKd,N,wi); 
-	vec3 col = fresnel(wi,wo, m, 1.33) * vec3(1.0); 
+	vec3 wi = (uLightPos - vec3(pos3D));
+	vec3 wo = (- vec3(pos3D));
+	vec3 halfVector =  normalize(wi+wo);
+	//vec3 col = lambert(uLightPower,uKd,N,wi); 
+	float c = fresnel(wi,halfVector, 1.33);
+	vec3 col =c * vec3(1.0);
 	
 	gl_FragColor = vec4(col,1.0);
 }
