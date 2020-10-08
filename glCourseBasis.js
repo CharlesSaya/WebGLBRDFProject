@@ -53,7 +53,12 @@ class objmesh {
 
 		this.shader.lightPos = gl.getUniformLocation(this.shader, "uLightPos");
 		this.shader.lightPower = gl.getUniformLocation(this.shader, "uLightPower");
+		this.shader.color = gl.getUniformLocation(this.shader, "uColor");
+
 		this.shader.kD = gl.getUniformLocation(this.shader, "uKd");
+		this.shader.kA = gl.getUniformLocation(this.shader, "uKa");
+		this.shader.kS = gl.getUniformLocation(this.shader, "uKs");
+		this.shader.rugosity = gl.getUniformLocation(this.shader, "uRugosity");
 
 	
 	}
@@ -67,6 +72,12 @@ class objmesh {
 		var lightPower = document.getElementById("power").value;
 		var color = convertHex(document.getElementById("color").value);	
 
+		var kA = document.getElementById("xPos").value;
+		var kD = document.getElementById("kD").value;
+		var kS = 1 - kD - kS;
+		document.getElementById("kS").value = kS;
+		var rugosity = document.getElementById("rugosity").value;
+
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, distCENTER);
 		mat4.multiply(mvMatrix, rotMatrix);	
@@ -78,7 +89,13 @@ class objmesh {
 						
 		gl.uniform3fv(this.shader.lightPos,[xLightPos,yLightPos,zLightPos]);
 		gl.uniform3fv(this.shader.lightPower,[lightPower,lightPower,lightPower]);
-		gl.uniform3fv(this.shader.kD,color);
+		gl.uniform3fv(this.shader.color,color);
+
+		gl.uniform1f(this.shader.kA,kA);
+		gl.uniform1f(this.shader.kD,kD);
+		gl.uniform1f(this.shader.kS,kS);
+		gl.uniform1f(this.shader.rugosity,rugosity);
+
 		
 	}
 	
