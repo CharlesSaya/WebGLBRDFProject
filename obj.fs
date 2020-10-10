@@ -47,8 +47,8 @@ float fresnel(vec3 wi,vec3 halfVector, float n){
 
 // =====================================================
 
-float beckmann(vec3 wi, vec3 halfVector, float rugosity ){
-	float theta = dot(wi,halfVector);
+float beckmann(vec3 normale, vec3 wi, vec3 halfVector, float rugosity ){
+	float theta = acos(dot(normale, halfVector));
 	float a = exp(-tan(theta)*tan(theta)/(2.0*rugosity*rugosity));
 	float b = M_PI * rugosity * rugosity * pow(cos(theta),4.0);
 	return a/b;
@@ -65,11 +65,11 @@ float cook_torrance(vec3 normale, vec3 halfVector, vec3 wi, vec3 wo){
 
 
 // =====================================================
-float brdf(float kD, float kS, float fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, vec3 normale){
+float brdf(float fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, vec3 normale){
 	float dot_in = abs(dot(wi,normale));
 	float dot_on = abs(dot(wo,normale));
 
-	return 0./M_PI + (1.0 * fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) ;
+	return ( fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) ;
 }
 
 
@@ -78,16 +78,16 @@ void main(void)
 {
 	vec3 wi = normalize(uLightPos - vec3(pos3D));
 	vec3 wo = normalize(- vec3(pos3D));
-	vec3 halfVector =  normalize((wi+wo)/2.0);
+	vec3 halfVector =  normalize((wi+wo));
 
 
 	//vec3 col = lambert(uLightPower,uKd,N,wi); 
 	float f = fresnel(wi,halfVector,1.33);
-	float d = beckmann(wi,halfVector,uRugosity);
+	float d = beckmann(N, wi,halfVector,uRugosity);
 	float g = cook_torrance(N, halfVector,wi,wo);
 
-	vec3 col =vec3(brdf(uKd,uKs,f,d,g,wi,wo,N) )	;
-	
+	vec3 col = (brdf(f,d,g,wi,wo,N) * uLightPower * uColor * clamp(dot(N,wi),0.0,1.0) )	;
+
 	gl_FragColor = vec4(col,1.0);
 }
 
