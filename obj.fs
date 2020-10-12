@@ -8,7 +8,6 @@ uniform vec3 uLightPos;
 uniform vec3 uLightPower;
 uniform vec3 uColor;
 
-uniform float uKa;
 uniform float uKd;
 uniform float uKs;
 uniform float uRugosity;
@@ -20,18 +19,18 @@ const float GLASS_INDEX = 1.5;
 
 // =====================================================
 
-vec3 lambert( vec3 lightPower, vec3 kD ,vec3 normale,vec3 wi){
+vec3 lambert( vec3 lightPower, float kD ,vec3 normale,vec3 wi){
 	float dotValue = dot(normale,wi);
-	return lightPower * kD/M_PI * clamp(dotValue,0.0,1.0);
+	return lightPower * kD/M_PI * uColor * clamp(dotValue,0.0,1.0);
 }
 
 // =====================================================
 
-vec3 phong(float kA, float kD, float kS, vec3 ambientColor, vec3 diffuseColor, vec3 specularColor, vec3 wi, vec3 wo, vec3 normale){
+vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 specularColor, vec3 wi, vec3 wo, vec3 normale){
 	float nl =dot(normale, wi);
 	vec3 reflectedRay = normalize(reflect(-wi,normale));
 	float ro = dot(reflectedRay,wo);
-	return kA * ambientColor + kD * diffuseColor * max(nl,0.0) + kS* specularColor* pow(max(ro,0.0),20.0);
+	return  kD * diffuseColor * max(nl,0.0) + kS* specularColor* pow(max(ro,0.0),20.0);
 
 }
 
@@ -69,7 +68,7 @@ float brdf(float fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, 
 	float dot_in = abs(dot(wi,normale));
 	float dot_on = abs(dot(wo,normale));
 
-	return ( fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) ;
+	return uKd/M_PI + uKs * (fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) ;
 }
 
 
@@ -78,14 +77,14 @@ void main(void)
 {
 	vec3 wi = normalize(uLightPos - vec3(pos3D));
 	vec3 wo = normalize(- vec3(pos3D));
-	vec3 halfVector =  normalize((wi+wo));
+	vec3 halfVector =  normalize((wi+wo));	
 
 
 	//vec3 col = lambert(uLightPower,uKd,N,wi); 
-	float f = fresnel(wi,halfVector,1.33);
+	float f = fresnel(wi,halfVector,2.80);
 	float d = beckmann(N, wi,halfVector,uRugosity);
 	float g = cook_torrance(N, halfVector,wi,wo);
-
+	//vec3 col = phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N);
 	vec3 col = (brdf(f,d,g,wi,wo,N) * uLightPower * uColor * clamp(dot(N,wi),0.0,1.0) )	;
 
 	gl_FragColor = vec4(col,1.0);

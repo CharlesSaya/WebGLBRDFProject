@@ -6,6 +6,7 @@
 var mouseDown = false;
 var lastMouseX = null;
 var lastMouseY = null;
+var handleLight = false;
 var rotY = 0;
 var rotX = -1;
 
@@ -55,17 +56,18 @@ function handleMouseUp(event) {
 	mouseDown = false;
 }
 
+// =====================================================
+
 
 // =====================================================
 function handleMouseMove(event) {
-	
-	if (!mouseDown){ 
+	if (document.getElementById("handleLight").checked && mouseDown){ 
 		var canvas = document.getElementById("WebGL-test");
 		var rect = canvas.getBoundingClientRect();
 		xLightPos = event.clientX - (canvas.width / 2) - rect.left;
 		yLightPos = - (event.clientY - (canvas.height / 2) - rect.top);
 	}
-	else{
+	else if (mouseDown){
 		var newX = event.clientX;
 		var newY = event.clientY;	
 		var deltaX = newX - lastMouseX;
