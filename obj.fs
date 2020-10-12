@@ -6,11 +6,13 @@ varying vec3 N;
 
 uniform vec3 uLightPos;
 uniform vec3 uLightPower;
+uniform vec3 uLightColor;
 uniform vec3 uColor;
 
 uniform float uKd;
 uniform float uKs;
 uniform float uRugosity;
+uniform float uRefractiveIndex;
 
 const float M_PI = 3.14159265358;
 const float WATER_INDEX = 1.33;
@@ -81,11 +83,11 @@ void main(void)
 
 
 	//vec3 col = lambert(uLightPower,uKd,N,wi); 
-	float f = fresnel(wi,halfVector,2.80);
+	float f = fresnel(wi,halfVector,uRefractiveIndex);
 	float d = beckmann(N, wi,halfVector,uRugosity);
 	float g = cook_torrance(N, halfVector,wi,wo);
 	//vec3 col = phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N)
-	vec3 col = (uKd/M_PI * uColor + uKs *  brdf(f,d,g,wi,wo,N) * vec3(1.0))* uLightPower  * clamp(dot(N,wi),0.0,1.0)	;
+	vec3 col = (uKd/M_PI * uColor + uKs *  brdf(f,d,g,wi,wo,N) * vec3(1.0))* uLightPower  * clamp(dot(N,wi),0.0,1.0) * uLightColor	;
 
 	gl_FragColor = vec4(col,1.0);
 }

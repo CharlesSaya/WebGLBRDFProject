@@ -13,6 +13,26 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 	<script type="text/javascript" src="farbtastic/farbtastic.js"></script>
 	<link rel="stylesheet" href="farbtastic/farbtastic.css" type="text/css" />
+	<style type="text/css">
+		input[type="range"] {
+			position: relative;
+			margin-left: 1em;
+		}
+		input[type="range"]:after,
+		input[type="range"]:before {
+			position: absolute;
+			top: 1em;
+			color: #aaa;
+		}
+		input[type="range"]:before {
+			left:0em;
+			content: attr(min);
+		}
+		input[type="range"]:after {
+			right: 0em;
+			content: attr(max);
+		}
+		</style> 
 </head>
 
 
@@ -22,16 +42,20 @@
 
 	<div id = "wrapper">
 		<div class="slidecontainer" id = "slides">
-			<label for="zPos">Light position Z : </label>	<input type="range" min="-10" max="10" value="0" class="slider" id="zPos"><br><br>
-			<label for="power">Light power : </label>	<input type="range" min="1" max="20"  value="5" class="slider" id="power"><br><br>
+			<label for="zPos">Light position Z : <span class="zPos"></span></label>	<input type="range" min="-10" max="10" value="0" class="slider" id="zPos"><br><br>
+			<label for="power">Light power : <span class="power"></span></label>	<input type="range" min="1" max="20"  value="5" class="slider" id="power"><br><br>
 			<div><label for="color">Object color : </label>
-			<input type="text" id="color" name="KD"  value="#e66465">
+			<input type="text" id="color" name="ObjectColor"  value="#e66465">
 			<div id="colorpicker"></div><br><br>
 
-			<input type=range id="kD" min =0 max=1 step=0.1 /> <br />
-			<input type=range id="kS" min =0 max=1 step=0.1 /> kS <br />
-			<input type=number id="rugosity" min =0 max=1 step=0.1 value="0.5" /> Rugosity <br />
-			<input type=checkbox id="handleLight">Handle light</button> 
+			<div><label for="LightColor">Light color : </label>
+				<input type="text" id="LightColor" name="LightColor"  value="#e66465">
+				<div id="colorpicker2"></div><br><br>
+
+			Coefficients : <input type=range class="slider" id="kD" min =0 max=1 step=0.01 value=0.5 /> <br />
+			( kD = <span class="kD"></span> , kS = <span id="kS"></span> ) <br />
+			<span class="rugosity"></span><input type=range class="slider" id="rugosity" min =0 max=1 step=0.01 value="0.5" /> Rugosity <br />
+			<span class="refractiveIndex"></span><input type=range class="slider" id="refractiveIndex" min =1 max=15 step=0.01 value="1.33" /> Refractive Index <br />
 		</div>
 
 		
@@ -42,6 +66,29 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 		  $('#colorpicker').farbtastic('#color');
+		  $('#colorpicker2').farbtastic('#LightColor');
+			$(".slider").each( function(){
+					var valof = $(this).val();
+					$('.'+$(this).attr("id")).text(valof);
+			});
+		});
+		$(function(){
+			//Slider : modification des valeurs lorsque l'on modifie la position du curseur
+			$(".slider").live('mousedown', function(){
+				$(".slider").live('mousemove', function(){
+					$(".slider").each( function(){
+							var valof = $(this).val();
+							$('.'+$(this).attr("id")).text(valof);
+					});
+				});
+			});
+			//Slider : modification des valeurs lorsque l'on termine la modification de position du curseur
+			$(".slider").live('change', function(){
+				$(".slider").each( function(){
+						var valof = $(this).val();
+						$('.'+$(this).attr("id")).text(valof);
+				});
+			});
 		});
 	  </script>
 </body>

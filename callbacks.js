@@ -61,13 +61,14 @@ function handleMouseUp(event) {
 
 // =====================================================
 function handleMouseMove(event) {
-	if (document.getElementById("handleLight").checked && mouseDown){ 
+	if(!mouseDown) return;
+	if (event.ctrlKey){ 
 		var canvas = document.getElementById("WebGL-test");
 		var rect = canvas.getBoundingClientRect();
 		xLightPos = event.clientX - (canvas.width / 2) - rect.left;
 		yLightPos = - (event.clientY - (canvas.height / 2) - rect.top);
 	}
-	else if (mouseDown){
+	else{
 		var newX = event.clientX;
 		var newY = event.clientY;	
 		var deltaX = newX - lastMouseX;

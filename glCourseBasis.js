@@ -55,11 +55,13 @@ class objmesh {
 
 		this.shader.lightPos = gl.getUniformLocation(this.shader, "uLightPos");
 		this.shader.lightPower = gl.getUniformLocation(this.shader, "uLightPower");
+		this.shader.lightColor = gl.getUniformLocation(this.shader, "uLightColor");
 		this.shader.color = gl.getUniformLocation(this.shader, "uColor");
 
 		this.shader.kD = gl.getUniformLocation(this.shader, "uKd");
 		this.shader.kS = gl.getUniformLocation(this.shader, "uKs");
 		this.shader.rugosity = gl.getUniformLocation(this.shader, "uRugosity");
+		this.shader.refractiveIndex = gl.getUniformLocation(this.shader, "uRefractiveIndex");
 
 	
 	}
@@ -71,12 +73,14 @@ class objmesh {
 		// var yLightPos = document.getElementById("yPos").value;
 		var zLightPos = document.getElementById("zPos").value;
 		var lightPower = document.getElementById("power").value;
+		var lightColor = convertHexLight(document.getElementById("LightColor").value);
 		var color = convertHex(document.getElementById("color").value);	
 
 		var kD = document.getElementById("kD").value;
-		var kS = 1 - kD;
-		document.getElementById("kS").value = kS;
+		var kS = Math.round((1.0 - kD) * 100) / 100; //Ks arrondie a 2 décimales
+		document.getElementById("kS").innerText = kS;
 		var rugosity = document.getElementById("rugosity").value;
+		var refractiveIndex = document.getElementById("refractiveIndex").value;
 
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, distCENTER);
@@ -89,11 +93,13 @@ class objmesh {
 						
 		gl.uniform3fv(this.shader.lightPos,[xLightPos,yLightPos,zLightPos]);
 		gl.uniform3fv(this.shader.lightPower,[lightPower,lightPower,lightPower]);
+		gl.uniform3fv(this.shader.lightColor,lightColor);
 		gl.uniform3fv(this.shader.color,color);
 
 		gl.uniform1f(this.shader.kD,kD);
 		gl.uniform1f(this.shader.kS,kS);
 		gl.uniform1f(this.shader.rugosity,rugosity);
+		gl.uniform1f(this.shader.refractiveIndex,refractiveIndex);
 
 		
 	}
@@ -336,14 +342,25 @@ function webGLStart() {
 
 // =====================================================
 function convertHex(hex){
-    hex = hex.replace('#','');
+	hex = hex.replace('#','');
+	
     r = parseInt(hex.substring(0,2), 16);
     g = parseInt(hex.substring(2,4), 16);
-    b = parseInt(hex.substring(4,6), 16);
-	
+	b = parseInt(hex.substring(4,6), 16);
+
     return [r/255,g/255,b/255];
 }
 
+// =====================================================
+function convertHexLight(hex){
+	hex = hex.replace('#','');
+	
+    r = Math.min(Math.max(parseInt(hex.substring(0,2), 16),0),254);
+    g = Math.min(Math.max(parseInt(hex.substring(2,4), 16),0),254);
+	b = Math.min(Math.max(parseInt(hex.substring(4,6), 16),0),254);
+	
+    return [r/255,g/255,b/255];
+}
 // =====================================================
 function drawScene() {
 
