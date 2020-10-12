@@ -68,7 +68,7 @@ float brdf(float fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, 
 	float dot_in = abs(dot(wi,normale));
 	float dot_on = abs(dot(wo,normale));
 
-	return uKd/M_PI + uKs * (fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) ;
+	return  (fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on));
 }
 
 
@@ -84,8 +84,8 @@ void main(void)
 	float f = fresnel(wi,halfVector,2.80);
 	float d = beckmann(N, wi,halfVector,uRugosity);
 	float g = cook_torrance(N, halfVector,wi,wo);
-	//vec3 col = phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N);
-	vec3 col = (brdf(f,d,g,wi,wo,N) * uLightPower * uColor * clamp(dot(N,wi),0.0,1.0) )	;
+	//vec3 col = phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N)
+	vec3 col = (uKd/M_PI * uColor + uKs *  brdf(f,d,g,wi,wo,N) * vec3(1.0))* uLightPower  * clamp(dot(N,wi),0.0,1.0)	;
 
 	gl_FragColor = vec4(col,1.0);
 }
