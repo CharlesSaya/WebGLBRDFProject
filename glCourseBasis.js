@@ -14,6 +14,9 @@ var PLANE = null;
 // =====================================================
 var xLightPos = 0.0;
 var yLightPos = 0.0;
+// =====================================================
+
+var choice = 2;
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -63,7 +66,8 @@ class objmesh {
 		this.shader.rugosity = gl.getUniformLocation(this.shader, "uRugosity");
 		this.shader.refractiveIndex = gl.getUniformLocation(this.shader, "uRefractiveIndex");
 
-	
+		this.shader.choice = gl.getUniformLocation(this.shader, "uChoice");
+
 	}
 	
 	// --------------------------------------------
@@ -98,6 +102,8 @@ class objmesh {
 		gl.uniform1f(this.shader.kS,kS);
 		gl.uniform1f(this.shader.rugosity,rugosity);
 		gl.uniform1f(this.shader.refractiveIndex,refractiveIndex);
+
+		gl.uniform1i(this.shader.choice,choice);
 
 		
 	}

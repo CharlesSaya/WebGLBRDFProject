@@ -9,6 +9,8 @@ uniform vec3 uLightPower;
 uniform vec3 uLightColor;
 uniform vec3 uColor;
 
+uniform int uChoice;
+
 uniform float uKd;
 uniform float uKs;
 uniform float uRugosity;
@@ -77,18 +79,23 @@ float brdf(float fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, 
 // =====================================================
 void main(void)
 {
+	vec3 col = vec3(0);
 	vec3 wi = normalize(uLightPos - vec3(pos3D));
 	vec3 wo = normalize(- vec3(pos3D));
 	vec3 halfVector =  normalize((wi+wo));	
 
 
-	//vec3 col = lambert(uLightPower,uKd,N,wi); 
 	float f = fresnel(wi,halfVector,uRefractiveIndex);
 	float d = beckmann(N, wi,halfVector,uRugosity);
 	float g = cook_torrance(N, halfVector,wi,wo);
-	//vec3 col = phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N)
-	vec3 col = (uKd/M_PI * uColor + uKs *  brdf(f,d,g,wi,wo,N) * vec3(1.0))* uLightPower  * clamp(dot(N,wi),0.0,1.0) * uLightColor	;
 
+	if(uChoice==0)
+			col = lambert(uLightPower,uKd,N,wi);
+	else if (uChoice == 1)
+			col =  phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N);
+	else
+			col = (uKd/M_PI * uColor + uKs *  brdf(f,d,g,wi,wo,N) * vec3(1.0))* uLightPower  * clamp(dot(N,wi),0.0,1.0) * uLightColor	;
+	
 	gl_FragColor = vec4(col,1.0);
 }
 
