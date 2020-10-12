@@ -58,6 +58,30 @@ function handleMouseUp(event) {
 
 // =====================================================
 
+function handleButton(clicked_button){
+	node0 = document.getElementById("cook_torrance");
+	node1 = document.getElementById("phong");
+	node2 = document.getElementById("lambert");
+
+	switch(clicked_button){
+		case "cook_torranceButton":
+			node0.style.visibility = "visible";
+			node1.style.visibility = "hidden";
+			node2.style.visibility = "hidden";
+			break;
+		case "phongButton":
+			node1.style.visibility = "visible";
+			node0.style.visibility = "hidden";
+			node2.style.visibility = "hidden";
+			break;
+		default:
+			node2.style.visibility = "visible";
+			node1.style.visibility = "hidden";
+			node0.style.visibility = "hidden";
+			break;
+			
+	}
+}
 
 // =====================================================
 function handleMouseMove(event) {

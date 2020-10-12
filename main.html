@@ -13,54 +13,59 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 	<script type="text/javascript" src="farbtastic/farbtastic.js"></script>
 	<link rel="stylesheet" href="farbtastic/farbtastic.css" type="text/css" />
-	<style type="text/css">
-		input[type="range"] {
-			position: relative;
-			margin-left: 1em;
-		}
-		input[type="range"]:after,
-		input[type="range"]:before {
-			position: absolute;
-			top: 1em;
-			color: #aaa;
-		}
-		input[type="range"]:before {
-			left:0em;
-			content: attr(min);
-		}
-		input[type="range"]:after {
-			right: 0em;
-			content: attr(max);
-		}
-		</style> 
+	<link rel="stylesheet" href="style.css">
+
 </head>
 
 
 <body onload="webGLStart();">
-	<canvas id="WebGL-test" style="border:none;" width="1000" height="800"></canvas>
+	<canvas id="WebGL-test" style="border:none;" width="1200" height="900"></canvas>
 	<br><br>
 
 	<div id = "wrapper">
-		<div class="slidecontainer" id = "slides">
-			<label for="zPos">Light position Z : <span class="zPos"></span></label>	<input type="range" min="-10" max="10" value="0" class="slider" id="zPos"><br><br>
-			<label for="power">Light power : <span class="power"></span></label>	<input type="range" min="1" max="20"  value="5" class="slider" id="power"><br><br>
-			<div><label for="color">Object color : </label>
-			<input type="text" id="color" name="ObjectColor"  value="#e66465">
-			<div id="colorpicker"></div><br><br>
+		<div id="cook_torrance">
+			<div class="slidecontainer" id = "slides">
+				<label for="zPos">Light position Z : <span class="zPos"></span></label>	<br /><input type="range" min="-10" max="10" value="0" class="slider" id="zPos"><br><br>
+				<label for="power">Light power : <span class="power"></span></label>	<br /><input type="range" min="1" max="20"  value="5" class="slider" id="power"><br><br>
 
-			<div><label for="LightColor">Light color : </label>
-				<input type="text" id="LightColor" name="LightColor"  value="#e66465">
-				<div id="colorpicker2"></div><br><br>
+			
 
-			Coefficients : <input type=range class="slider" id="kD" min =0 max=1 step=0.01 value=0.5 /> <br />
-			( kD = <span class="kD"></span> , kS = <span id="kS"></span> ) <br />
-			<span class="rugosity"></span><input type=range class="slider" id="rugosity" min =0 max=1 step=0.01 value="0.5" /> Rugosity <br />
-			<span class="refractiveIndex"></span><input type=range class="slider" id="refractiveIndex" min =1 max=15 step=0.01 value="1.33" /> Refractive Index <br />
+				<label for="kD"> Coefficients : ( kD = <span class="kD"></span> , kS = <span id="kS"></span> ) </label> <br />	
+				<input type=range class="slider" id="kD" min =0 max=1 step=0.01 value=0.5 /> <br /><br/>
+
+				<label for="rugosity"> Rugosity <span class="rugosity"></span> <br /> </label><input type=range class="slider" id="rugosity" min =0 max=1 step=0.01 value="0.5" /><br /><br />
+				<label for="refractiveIndex"> Refractive Index <span class="refractiveIndex"></span> <br /> </label><input type=range class="slider" id="refractiveIndex" min =1 max=5 step=0.01 value="1.33" /> <br /><br />	
+			</div>
+
+			<div id="colorPickers">
+				<div><label for="color">Object color : </label>
+					<input type="text" id="color" name="ObjectColor"  value="#e66465">
+					<div id="colorpicker"></div><br><br>
+
+					<div><label for="LightColor">Light color : </label>
+						<input type="text" id="LightColor" name="LightColor"  value="#e66465">
+						<div id="colorpicker2"></div><br><br>
+					</div>
+				</div>
+			</div>
+
+			<div id = "refractiveIndex">
+				<label for="refractiveIndex"> Refractive Index <br /> </label>
+					<input type=range class="slider" id="refractiveIndex" min =1 max=15 step=0.01 value="1.33" /> <br /><br />	
+
+
+			</div>
 		</div>
 
-		
+		<div id="phong"></div>
+		<div id="lambert"></div>
 	</div>
 
+	<div id="mode_choice">
+		<button id="cook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance</button>
+		<button id="phongButton" onclick="handleButton(this.id)">Phong</button>
+		<button id="lambertButton" onclick="handleButton(this.id)">Lambert</button>
+	</div>
 
 	<!-- scripts -->
 	<script type="text/javascript">

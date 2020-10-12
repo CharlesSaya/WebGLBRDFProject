@@ -69,8 +69,6 @@ class objmesh {
 	// --------------------------------------------
 	setUniformsParams() {
 
-		// var xLightPos = document.getElementById("xPos").value;
-		// var yLightPos = document.getElementById("yPos").value;
 		var zLightPos = document.getElementById("zPos").value;
 		var lightPower = document.getElementById("power").value;
 		var lightColor = convertHexLight(document.getElementById("LightColor").value);
