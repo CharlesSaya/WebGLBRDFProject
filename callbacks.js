@@ -59,25 +59,32 @@ function handleMouseUp(event) {
 // =====================================================
 function handleMouseMove(event) {
 	
-	if (!mouseDown) return;
-
-	var newX = event.clientX;
-	var newY = event.clientY;	
-	var deltaX = newX - lastMouseX;
-	var deltaY = newY - lastMouseY;
-	
-	if(event.shiftKey) {
-		distCENTER[2] += deltaY/100.0;
-	} else {
-
-		rotY += degToRad(deltaX / 5);
-		rotX += degToRad(deltaY / 5);
-
-		mat4.identity(rotMatrix);
-		mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
-		mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
+	if (!mouseDown){ 
+		var canvas = document.getElementById("WebGL-test");
+		var rect = canvas.getBoundingClientRect();
+		xLightPos = event.clientX - (canvas.width / 2) - rect.left;
+		yLightPos = - (event.clientY - (canvas.height / 2) - rect.top);
 	}
-	
-	lastMouseX = newX
-	lastMouseY = newY;
+	else{
+		var newX = event.clientX;
+		var newY = event.clientY;	
+		var deltaX = newX - lastMouseX;
+		var deltaY = newY - lastMouseY;
+		
+		if(event.shiftKey) {
+			distCENTER[2] += deltaY/100.0;
+		} else {
+
+			rotY += degToRad(deltaX / 5);
+			rotX += degToRad(deltaY / 5);
+
+			mat4.identity(rotMatrix);
+			mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
+			mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
+		}
+		
+		lastMouseX = newX;
+		lastMouseY = newY;
+
+	}
 }

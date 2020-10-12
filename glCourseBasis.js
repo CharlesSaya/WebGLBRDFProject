@@ -11,7 +11,9 @@ var distCENTER;
 
 var OBJ1 = null;
 var PLANE = null;
-
+// =====================================================
+var xLightPos = 0.0;
+var yLightPos = 0.0;
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -66,13 +68,13 @@ class objmesh {
 	// --------------------------------------------
 	setUniformsParams() {
 
-		var xLightPos = document.getElementById("xPos").value;
-		var yLightPos = document.getElementById("yPos").value;
+		// var xLightPos = document.getElementById("xPos").value;
+		// var yLightPos = document.getElementById("yPos").value;
 		var zLightPos = document.getElementById("zPos").value;
 		var lightPower = document.getElementById("power").value;
 		var color = convertHex(document.getElementById("color").value);	
 
-		var kA = document.getElementById("xPos").value;
+		var kA = document.getElementById("kA").value;
 		var kD = document.getElementById("kD").value;
 		var kS = 1 - kD - kS;
 		document.getElementById("kS").value = kS;
