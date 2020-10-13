@@ -61,22 +61,54 @@ function handleMouseUp(event) {
 function handleButton(clicked_button){
 	node0 = document.getElementById("cook_torrance_param");
 	node1 = document.getElementById("coeff_param");
+	node2 = document.getElementById("refractiveChoice");
+
 
 	switch(clicked_button){
 		case "cook_torranceButton":
 			node0.style.visibility = "visible";
 			node1.style.visibility = "visible";
+			node2.style.visibility = "visible";
 			choice = 2;
 			break;
 		case "phongButton":
 			node1.style.visibility = "visible";
 			node0.style.visibility = "hidden";
+			node2.style.visibility = "hidden";
+
 			choice = 1;
 			break;
 		default:
 			node0.style.visibility = "hidden";
 			node1.style.visibility = "hidden";
+			node2.style.visibility = "hidden";
+
 			choice = 0;
+			break;
+			
+	}
+}
+// =====================================================
+
+function handleIndex(indexId){
+	switch(indexId){
+		case "air":
+			index = 1.0;
+			break;
+		case "water":
+			index = 1.33;
+			break;
+		case "glass":
+			index = 1.5;
+			break;
+		case "titanium":
+			index = 2.484;
+			break;
+		case "refrIndButton":
+			index = document.getElementById("other").value;
+			break;
+		default:
+			index = 1.0;
 			break;
 			
 	}

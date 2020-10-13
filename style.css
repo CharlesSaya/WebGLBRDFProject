@@ -1,7 +1,19 @@
+
+#all{
+    display: inline-block;
+
+}
 #wrapper{
     position: absolute;
-      top:20px;
-      left:50px;
+    top:20px;
+    left:50px;
+}
+
+#other_settings{
+    position: absolute;
+    top:20px;
+    width: 100%;
+
 }
 
 .slider{

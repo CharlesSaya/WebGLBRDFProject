@@ -76,6 +76,7 @@ float brdf(float fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, 
 }
 
 
+
 // =====================================================
 void main(void)
 {

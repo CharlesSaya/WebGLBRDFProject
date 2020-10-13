@@ -14,6 +14,7 @@ var PLANE = null;
 // =====================================================
 var xLightPos = 0.0;
 var yLightPos = 0.0;
+var index = 1.0;
 // =====================================================
 
 var choice = 2;
@@ -82,7 +83,6 @@ class objmesh {
 		var kS = Math.round((1.0 - kD) * 100) / 100; //Ks arrondie a 2 décimales
 		document.getElementById("kS").innerText = kS;
 		var rugosity = document.getElementById("rugosity").value;
-		var refractiveIndex = document.getElementById("refractiveIndex").value;
 
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, distCENTER);
@@ -101,7 +101,7 @@ class objmesh {
 		gl.uniform1f(this.shader.kD,kD);
 		gl.uniform1f(this.shader.kS,kS);
 		gl.uniform1f(this.shader.rugosity,rugosity);
-		gl.uniform1f(this.shader.refractiveIndex,refractiveIndex);
+		gl.uniform1f(this.shader.refractiveIndex,index);
 
 		gl.uniform1i(this.shader.choice,choice);
 
