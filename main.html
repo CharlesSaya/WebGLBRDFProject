@@ -56,9 +56,9 @@
 		</div>
 		<div class="box" id="other_settings" >
 			<div id="mode_choice">
-				<button id="cook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance</button>
+				<button id="cook_torranceButton" onclick="handleButton(this.id)" disabled>Cook-Torrance</button>
 				<button id="phongButton" onclick="handleButton(this.id)">Phong</button>
-				<button id="lambertButton" onclick="handleButton(this.id)">Lambert</button>
+				<button id="lambertButton" onclick="handleButton(this.id)" >Lambert</button>
 			</div> <br> <br>
 
 			<div id = "refractiveChoice">
@@ -68,7 +68,7 @@
 				<img src="verre.jpg" id = "glass" width="100" height="100" onclick="handleIndex(this.id)">
 				<img src="titane.jpg" id = "titanium" width="100" height="100" onclick="handleIndex(this.id)"></br>
 
-				<input type="number" min ="0" max ="10" id="other" step="0.001" > <button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button>
+				<input type="number" min ="0" max ="10" id="other" step="0.001" value="1.0"> <button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button>
 			</div>
 		</div>
 		<div class="box" id="commands">

@@ -23,18 +23,18 @@ const float GLASS_INDEX = 1.5;
 
 // =====================================================
 
-vec3 lambert( vec3 lightPower, float kD ,vec3 normale,vec3 wi){
+vec3 lambert( vec3 lightPower, float kD, vec3 normale, vec3 wi, vec3 lightcolor){
 	float dotValue = dot(normale,wi);
-	return lightPower * kD/M_PI * uColor * clamp(dotValue,0.0,1.0);
+	return lightPower * kD/M_PI * uColor * clamp(dotValue,0.0,1.0) * lightcolor;
 }
 
 // =====================================================
 
-vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 specularColor, vec3 wi, vec3 wo, vec3 normale){
+vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 specularColor, vec3 wi, vec3 wo, vec3 normale, vec3 lightPower, vec3 lightcolor){
 	float nl =dot(normale, wi);
 	vec3 reflectedRay = normalize(reflect(-wi,normale));
 	float ro = dot(reflectedRay,wo);
-	return  kD * diffuseColor * max(nl,0.0) + kS* specularColor* pow(max(ro,0.0),20.0);
+	return  kD * diffuseColor * max(nl,0.0) + kS* specularColor* pow(max(ro,0.0),20.0) * lightPower * lightcolor;
 
 }
 
@@ -91,9 +91,9 @@ void main(void)
 	float g = cook_torrance(N, halfVector,wi,wo);
 
 	if(uChoice==0)
-			col = lambert(uLightPower,uKd,N,wi);
+			col = lambert(uLightPower,uKd,N,wi,uLightColor);
 	else if (uChoice == 1)
-			col =  phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N);
+			col =  phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N, uLightPower, uLightColor);
 	else
 			col = (uKd/M_PI * uColor + uKs *  brdf(f,d,g,wi,wo,N) * vec3(1.0))* uLightPower  * clamp(dot(N,wi),0.0,1.0) * uLightColor	;
 	
