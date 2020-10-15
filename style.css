@@ -34,6 +34,10 @@
     border-radius: 10px;
 
 }
+.active{
+  opacity: 0.5;
+  border: 2px solid rgba(50, 50, 50, 1);
+}
 .slider{
     top:2px;
 }

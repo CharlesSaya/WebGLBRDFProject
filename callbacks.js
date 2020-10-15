@@ -69,20 +69,27 @@ function handleButton(clicked_button){
 			node0.style.visibility = "visible";
 			node1.style.visibility = "visible";
 			node2.style.visibility = "visible";
+			document.getElementById(clicked_button).disabled = true;
+			document.getElementById("phongButton").disabled = false;
+			document.getElementById("lambertButton").disabled = false;
 			choice = 2;
 			break;
 		case "phongButton":
 			node1.style.visibility = "visible";
 			node0.style.visibility = "hidden";
 			node2.style.visibility = "hidden";
-
+			document.getElementById(clicked_button).disabled = true;
+			document.getElementById("cook_torranceButton").disabled = false;
+			document.getElementById("lambertButton").disabled = false;
 			choice = 1;
 			break;
 		default:
 			node0.style.visibility = "hidden";
 			node1.style.visibility = "hidden";
 			node2.style.visibility = "hidden";
-
+			document.getElementById(clicked_button).disabled = true;
+			document.getElementById("phongButton").disabled = false;
+			document.getElementById("cook_torranceButton").disabled = false;
 			choice = 0;
 			break;
 			
@@ -94,24 +101,50 @@ function handleIndex(indexId){
 	switch(indexId){
 		case "air":
 			index = 1.0;
+			document.getElementById("air").className = "active";
+			document.getElementById("water").className = "";
+			document.getElementById("glass").className = "";
+			document.getElementById("titanium").className = "";
 			break;
 		case "water":
 			index = 1.33;
+			document.getElementById("air").className = "";
+			document.getElementById("water").className = "active";
+			document.getElementById("glass").className = "";
+			document.getElementById("titanium").className = "";
 			break;
 		case "glass":
 			index = 1.5;
+			document.getElementById("air").className = "";
+			document.getElementById("water").className = "";
+			document.getElementById("glass").className = "active";
+			document.getElementById("titanium").className = "";
 			break;
 		case "titanium":
 			index = 2.484;
+			document.getElementById("air").className = "";
+			document.getElementById("water").className = "";
+			document.getElementById("glass").className = "";
+			document.getElementById("titanium").className = "active";
 			break;
 		case "refrIndButton":
 			index = document.getElementById("other").value;
+			document.getElementById("air").className = "";
+			document.getElementById("water").className = "";
+			document.getElementById("glass").className = "";
+			document.getElementById("titanium").className = "";
 			break;
 		default:
 			index = 1.0;
+			document.getElementById("air").className = "";
+			document.getElementById("water").className = "";
+			document.getElementById("glass").className = "";
+			document.getElementById("titanium").className = "";
 			break;
 			
 	}
+	
+	document.getElementById("other").value = index;
 }
 
 // =====================================================
