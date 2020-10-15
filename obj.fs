@@ -8,6 +8,7 @@ uniform vec3 uLightPos;
 uniform vec3 uLightPower;
 uniform vec3 uLightColor;
 uniform vec3 uColor;
+uniform float uSpecularityPower;
 
 uniform int uChoice;
 
@@ -15,10 +16,9 @@ uniform float uKd;
 uniform float uKs;
 uniform float uRugosity;
 uniform float uRefractiveIndex;
+uniform vec3 uRGBRefractiveIndex;
 
 const float M_PI = 3.14159265358;
-
-
 
 // =====================================================
 
@@ -29,11 +29,11 @@ vec3 lambert( vec3 lightPower, float kD, vec3 normale, vec3 wi, vec3 lightcolor)
 
 // =====================================================
 
-vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 specularColor, vec3 wi, vec3 wo, vec3 normale, vec3 lightPower, vec3 lightcolor){
+vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 specularColor, vec3 wi, vec3 wo, vec3 normale, vec3 lightPower, vec3 lightcolor, float specularityPower){
 	float nl =dot(normale, wi);
 	vec3 reflectedRay = normalize(reflect(-wi,normale));
 	float ro = dot(reflectedRay,wo);
-	return  kD * diffuseColor * max(nl,0.0) + kS* specularColor* pow(max(ro,0.0),20.0) * lightPower * lightcolor;
+	return  kD * diffuseColor * max(nl,0.0) + kS* specularColor* pow(max(ro,0.0),specularityPower) * lightPower * lightcolor;
 
 }
 
@@ -45,6 +45,13 @@ float fresnel(vec3 wi,vec3 halfVector, float n){
 	float a = 0.5 * (g-c)*(g-c) / ((g+c)*(g+c));
 	float b = (c*(g+c)-1.0) * (c*(g+c)-1.0) / ( (c*(g-c) +1.0) * (c*(g-c) +1.0));
 	return (a * (1.0+b) ) ;	
+}
+
+// =====================================================
+vec3 schlick(vec3 wi,vec3 halfVector, vec3 n){
+	vec3 rf0  =((n - vec3(1.0)) / (n + vec3(1.0))) * ((n - vec3(1.0 )) / (n+vec3(1.0)));
+	return n + (1.0-n)*pow(1.0-dot(halfVector,wi),5.0); 
+	
 }
 
 // =====================================================
@@ -74,7 +81,14 @@ vec3 brdf(float kd, float ks, vec3 color, float fresnel,float beckmann, float co
 	return  kd/M_PI * uColor + ks *  (fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) * vec3(1.0);
 }
 
+// =====================================================
 
+vec3 brdfRGB(float kd, float ks, vec3 color, vec3 fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, vec3 normale){
+	float dot_in = abs(dot(wi,normale));
+	float dot_on = abs(dot(wo,normale));
+
+	return  kd/M_PI * uColor + ks *  (fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) * vec3(1.0);
+}
 
 // =====================================================
 void main(void)
@@ -86,15 +100,16 @@ void main(void)
 
 
 	float f = fresnel(wi,halfVector,uRefractiveIndex);
+	vec3 schlick = schlick(wi,halfVector,uRGBRefractiveIndex);
 	float d = beckmann(N, wi,halfVector,uRugosity);
 	float g = cook_torrance(N, halfVector,wi,wo);
 
 	if(uChoice==0)
 			col = lambert(uLightPower,uKd,N,wi,uLightColor);
 	else if (uChoice == 1)
-			col =  phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N, uLightPower, uLightColor);
+			col =  phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N, uLightPower, uLightColor,uSpecularityPower);
 	else
-			col = brdf(uKd, uKs, uColor,f,d,g,wi,wo,N)* uLightColor * uLightPower  * clamp(dot(N,wi),0.0,1.0);
+			col = brdfRGB(uKd, uKs, uColor,schlick,d,g,wi,wo,N)* uLightColor * uLightPower  * clamp(dot(N,wi),0.0,1.0);
 	
 	gl_FragColor = vec4(col,1.0);
 }

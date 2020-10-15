@@ -38,6 +38,11 @@
 						<!--<label for="refractiveIndex"> Refractive Index <span class="refractiveIndex"></span> <br /> </label><input type=range class="slider" id="refractiveIndex" min =1 max=5 step=0.01 value="1.33" /> <br /><br />	-->
 					</div>
 
+					<div id="phong_specularity" style="visibility: hidden;" >
+						<label for="specularity_power"> Specularity power : <span class="specularity_power"></span> <br /> </label><input type=range class="slider" id="specularity_power" min =0.0 max=100 step=1.0 value="20" /><br /><br />
+						<!--<label for="refractiveIndex"> Refractive Index <span class="refractiveIndex"></span> <br /> </label><input type=range class="slider" id="refractiveIndex" min =1 max=5 step=0.01 value="1.33" /> <br /><br />	-->
+					</div>
+
 				</div>
 
 				<div id="colorPickers">
@@ -56,19 +61,24 @@
 		</div>
 		<div class="box" id="other_settings" >
 			<div id="mode_choice">
-				<button id="cook_torranceButton" onclick="handleButton(this.id)" disabled>Cook-Torrance</button>
+				<button id="cook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance</button>
 				<button id="phongButton" onclick="handleButton(this.id)">Phong</button>
-				<button id="lambertButton" onclick="handleButton(this.id)" >Lambert</button>
+				<button id="lambertButton" onclick="handleButton(this.id)">Lambert</button>
 			</div> <br> <br>
 
 			<div id = "refractiveChoice">
-				
-				<img src="air.png" id = "air" width="100" height="100" onclick="handleIndex(this.id)" >
-				<img src="water.jpg" id = "water" width="100" height="100" onclick="handleIndex(this.id)">
-				<img src="verre.jpg" id = "glass" width="100" height="100" onclick="handleIndex(this.id)">
-				<img src="titane.jpg" id = "titanium" width="100" height="100" onclick="handleIndex(this.id)"></br>
+				Refraction index : <br>
+				<img src="air.png" id = "air" width="80" height="80" onclick="handleIndex(this.id)" >
+				<img src="water.jpg" id = "water" width="80" height="80" onclick="handleIndex(this.id)">
+				<img src="verre.jpg" id = "glass" width="80" height="80" onclick="handleIndex(this.id)">
+				<img src="gold.jpg" id = "gold" width="80" height="80" onclick="handleIndex(this.id)"></br>
 
-				<input type="number" min ="0" max ="10" id="other" step="0.001" value="1.0"> <button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button>
+				R : <input type="number" min ="0" max ="1" id="r" step="0.0	1" value="0.0"> <br>
+				G : <input type="number" min ="0" max ="1" id="g" step="0.01" value="0.0"> <br>
+				B : <input type="number" min ="0" max ="1" id="b" step="0.01" value="0.0"> <br>
+				<button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button>
+
+				<!--<input type="number" min ="0" max ="10" id="other" step="0.001" > <button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button>-->
 			</div>
 		</div>
 		<div class="box" id="commands">
