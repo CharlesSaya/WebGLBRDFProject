@@ -17,8 +17,7 @@ uniform float uRugosity;
 uniform float uRefractiveIndex;
 
 const float M_PI = 3.14159265358;
-const float WATER_INDEX = 1.33;
-const float GLASS_INDEX = 1.5;
+
 
 
 // =====================================================
@@ -68,11 +67,11 @@ float cook_torrance(vec3 normale, vec3 halfVector, vec3 wi, vec3 wo){
 
 
 // =====================================================
-float brdf(float fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, vec3 normale){
+vec3 brdf(float kd, float ks, vec3 color, float fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, vec3 normale){
 	float dot_in = abs(dot(wi,normale));
 	float dot_on = abs(dot(wo,normale));
 
-	return  (fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on));
+	return  kd/M_PI * uColor + ks *  (fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) * vec3(1.0);
 }
 
 
@@ -91,11 +90,11 @@ void main(void)
 	float g = cook_torrance(N, halfVector,wi,wo);
 
 	if(uChoice==0)
-			col = lambert(uLightPower,uKd,N,wi);
+			col = lambert(uLightPower,uKd,N,wi) * uLightColor ;
 	else if (uChoice == 1)
-			col =  phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N);
+			col =  phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N) * uLightColor  * uLightPower;
 	else
-			col = (uKd/M_PI * uColor + uKs *  brdf(f,d,g,wi,wo,N) * vec3(1.0))* uLightPower  * clamp(dot(N,wi),0.0,1.0) * uLightColor	;
+			col = brdf(uKd, uKs, uColor,f,d,g,wi,wo,N)* uLightColor * uLightPower  * clamp(dot(N,wi),0.0,1.0)	;
 	
 	gl_FragColor = vec4(col,1.0);
 }
