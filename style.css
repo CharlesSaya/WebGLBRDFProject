@@ -16,7 +16,7 @@
 #other_settings{
     position: absolute;
     top:20px;
-    width: 100%;
+    width: 450px;
     padding: 5px;
     background-color: rgba(120, 120, 120, 0.5);
     border: 1px solid rgba(120, 120, 120, 0.2);
@@ -27,7 +27,7 @@
 #commands{
     position: absolute;
     top: 230px;
-    width: 100%;
+    width: 520px;
     padding: 5px;
     background-color: rgba(120, 120, 120, 0.5);
     border: 1px solid rgba(120, 120, 120, 0.2);
