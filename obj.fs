@@ -83,9 +83,12 @@ vec3 schlick(vec3 wi,vec3 halfVector, vec3 rf0){
 
 
 float beckmann(vec3 normale, vec3 wi, vec3 halfVector, float rugosity ){
-	float theta = acos(dot(normale, halfVector));
-	float a = exp(-tan(theta)*tan(theta)/(2.0*rugosity*rugosity));
-	float b = M_PI * rugosity * rugosity * pow(cos(theta),4.0);
+	float cosTm = dot(normale, halfVector);
+	float cosTm2 = cosTm * cosTm;
+	float sinTm2 = 1.0 - cosTm2;
+	float tanTm2 = sinTm2 / cosTm2;
+	float a = exp(-tanTm2/(2.0*rugosity*rugosity));
+	float b = M_PI * rugosity * rugosity * cosTm2 * cosTm2;
 	return a/b;
 }
 
@@ -156,9 +159,10 @@ void main(void)
 	else if (uChoice == 1)																
 			col =  uLightPower * phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N,uShineCoeff)  * clamp(dot(N,wi),0.0,1.0)  * uLightColor;
 
-	else																					
+	else if (uChoice == 2)																					
 			col =  uLightPower * brdf_with_complex_index(uKd, uKs, uColor,fSchlick,d,g,wi,wo,N) * clamp(dot(N,wi),0.0,1.0)  * uLightColor;
-			//col =  uLightPower * brdf(uKd, uKs, uColor,f,d,g,wi,wo,N) * clamp(dot(N,wi),0.0,1.0)  * uLightColor;		//Dé-commenter pour utiliser des indices de réfraction simples
+	else
+			col =  uLightPower * brdf(uKd, uKs, uColor,f,d,g,wi,wo,N) * clamp(dot(N,wi),0.0,1.0)  * uLightColor;		//Dé-commenter pour utiliser des indices de réfraction simples
 	
 	gl_FragColor = vec4(col,1.0);
 }

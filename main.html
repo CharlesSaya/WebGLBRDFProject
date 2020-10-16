@@ -60,7 +60,8 @@
 		</div>
 		<div class="box" id="other_settings" >
 			<div id="mode_choice">
-				<button id="cook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance</button>
+				<button id="scook_torranceButton" onclick="handleButton(this.id)" disabled>Cook-Torrance (r&eacute;fraction simple)</button>
+				<button id="rcook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance (r&eacute;fraction complexe)</button>
 				<button id="phongButton" onclick="handleButton(this.id)">Phong</button>
 				<button id="lambertButton" onclick="handleButton(this.id)">Lambert</button>
 			</div> <br> <br>
@@ -70,15 +71,16 @@
 				<img src="air.png" id = "air" width="80" height="80" onclick="handleIndex(this.id)" >
 				<img src="water.jpg" id = "water" width="80" height="80" onclick="handleIndex(this.id)">
 				<img src="verre.jpg" id = "glass" width="80" height="80" onclick="handleIndex(this.id)">
-				<img src="gold.jpg" id = "gold" width="80" height="80" onclick="handleIndex(this.id)">
+				<span  id="CT1i"><img src="titane.jpg" id = "titane" width="80" height="80" onclick="handleIndex(this.id)"></span>
+				<span  id="CT2" style="visibility: hidden;"><img src="gold.jpg" id = "gold" width="80" height="80" onclick="handleIndex(this.id)">
 				<img src="copper.png" id = "copper" width="80" height="80" onclick="handleIndex(this.id)"></br>
-
+				
 				R : <input type="number" min ="0" max ="1" id="r" step="0.0	1" value="0.0"> <br>
 				G : <input type="number" min ="0" max ="1" id="g" step="0.01" value="0.0"> <br>
 				B : <input type="number" min ="0" max ="1" id="b" step="0.01" value="0.0"> <br>
-				<button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button>
+				<button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button></span></br>
+				<span  id="CT1"><input type="number" min ="1" max ="10" id="other" step="0.01" value="1"> <button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button></span><br>
 
-				<!--<input type="number" min ="0" max ="10" id="other" step="0.001" > <button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button>-->
 			</div>
 		</div>
 		<div class="box" id="commands">

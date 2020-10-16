@@ -68,12 +68,34 @@ function handleButton(clicked_button){
 	node2 = document.getElementById("refractiveChoice");
 	node3 = document.getElementById("phong_specularity");
 
+	img0 = document.getElementById("CT1");
+	img00 = document.getElementById("CT1i");
+	img1 = document.getElementById("CT2");
+
 	switch(clicked_button){
-		case "cook_torranceButton":
+		case "scook_torranceButton":
 			node0.style.visibility = "visible";
 			node1.style.visibility = "visible";
 			node2.style.visibility = "visible";
 			node3.style.visibility = "hidden";
+			img0.style.visibility = "visible";
+			img00.style.visibility = "visible";
+			img1.style.visibility = "hidden";
+			document.getElementById(clicked_button).disabled = true;
+			document.getElementById("rcook_torranceButton").disabled = false;
+			document.getElementById("phongButton").disabled = false;
+			document.getElementById("lambertButton").disabled = false;
+			choice = 3;
+			break;
+		case "rcook_torranceButton":
+			node0.style.visibility = "visible";
+			node1.style.visibility = "visible";
+			node2.style.visibility = "visible";
+			node3.style.visibility = "hidden";
+			img0.style.visibility = "hidden";
+			img00.style.visibility = "hidden";
+			img1.style.visibility = "visible";
+			document.getElementById("scook_torranceButton").disabled = false;
 			document.getElementById(clicked_button).disabled = true;
 			document.getElementById("phongButton").disabled = false;
 			document.getElementById("lambertButton").disabled = false;
@@ -84,8 +106,12 @@ function handleButton(clicked_button){
 			node0.style.visibility = "hidden";
 			node2.style.visibility = "hidden";
 			node3.style.visibility = "visible";	
+			img0.style.visibility = "hidden";
+			img00.style.visibility = "hidden";
+			img1.style.visibility = "hidden";
 			document.getElementById(clicked_button).disabled = true;
-			document.getElementById("cook_torranceButton").disabled = false;
+			document.getElementById("scook_torranceButton").disabled = false;
+			document.getElementById("rcook_torranceButton").disabled = false;
 			document.getElementById("lambertButton").disabled = false;
 			choice = 1;
 			break;
@@ -94,9 +120,13 @@ function handleButton(clicked_button){
 			node1.style.visibility = "hidden";
 			node2.style.visibility = "hidden";
 			node3.style.visibility = "hidden";
+			img0.style.visibility = "hidden";
+			img00.style.visibility = "hidden";
+			img1.style.visibility = "hidden";
 			document.getElementById(clicked_button).disabled = true;
 			document.getElementById("phongButton").disabled = false;
-			document.getElementById("cook_torranceButton").disabled = false;
+			document.getElementById("scook_torranceButton").disabled = false;
+			document.getElementById("rcook_torranceButton").disabled = false;
 			choice = 0;
 			break;
 			
@@ -116,6 +146,7 @@ function handleIndex(indexId){
 			document.getElementById("air").className = "active";
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
+			document.getElementById("titane").className = "";
 			document.getElementById("gold").className = "";
 			document.getElementById("copper").className="";
 			break;
@@ -125,6 +156,7 @@ function handleIndex(indexId){
 			document.getElementById("air").className = "";
 			document.getElementById("water").className = "active";
 			document.getElementById("glass").className = "";
+			document.getElementById("titane").className = "";
 			document.getElementById("gold").className = "";
 			document.getElementById("copper").className="";
 			break;
@@ -134,24 +166,37 @@ function handleIndex(indexId){
 			document.getElementById("air").className = "";
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "active";
+			document.getElementById("titane").className = "";
 			document.getElementById("gold").className = "";
 			document.getElementById("copper").className="";
 			break;
-		case "gold":
+		case "titane":
 			index = 2.484;
 			rgbIndex = [1.00,0.71,0.29];
 			document.getElementById("air").className = "";
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
+			document.getElementById("titane").className = "active";
+			document.getElementById("gold").className = "";
+			document.getElementById("copper").className="";
+			break;
+		case "gold":
+			index = 1;
+			rgbIndex = [1.00,0.71,0.29];
+			document.getElementById("air").className = "";
+			document.getElementById("water").className = "";
+			document.getElementById("glass").className = "";
+			document.getElementById("titane").className = "";
 			document.getElementById("gold").className = "active";
 			document.getElementById("copper").className="";
 			break;
 		case "copper":
-			index = 2.484;
+			index = 1;
 			rgbIndex = [0.95,0.64,0.54];
 			document.getElementById("air").className = "";
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
+			document.getElementById("titane").className = "";
 			document.getElementById("gold").className = "";
 			document.getElementById("copper").className="active";
 			break;
@@ -181,6 +226,7 @@ function handleIndex(indexId){
 	document.getElementById("r").value = rgbIndex[0];
 	document.getElementById("g").value = rgbIndex[1];
 	document.getElementById("b").value = rgbIndex[2];
+	document.getElementById("other").value = index;
 }
 
 // =====================================================
