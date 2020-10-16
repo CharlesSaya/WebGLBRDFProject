@@ -150,8 +150,6 @@ function handleIndex(indexId){
 			document.getElementById("copper").className="active";
 			break;
 		case "refrIndButton":
-			//index = document.getElementById("other").value;
-
 			var r = document.getElementById("r").value;
 			var g = document.getElementById("g").value;
 			var b = document.getElementById("b").value;
@@ -173,7 +171,9 @@ function handleIndex(indexId){
 			
 	}
 	
-	//	document.getElementById("other").value = index;
+	document.getElementById("r").value = rgbIndex[0];
+	document.getElementById("g").value = rgbIndex[1];
+	document.getElementById("b").value = rgbIndex[2];
 }
 
 // =====================================================
