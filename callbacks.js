@@ -58,13 +58,15 @@ function handleMouseUp(event) {
 
 // =====================================================
 
+/*
+ *	Fonction permettant de choisir le mode de BRDF que l'on souhaite
+ */
+
 function handleButton(clicked_button){
 	node0 = document.getElementById("cook_torrance_param");
 	node1 = document.getElementById("coeff_param");
 	node2 = document.getElementById("refractiveChoice");
 	node3 = document.getElementById("phong_specularity");
-
-
 
 	switch(clicked_button){
 		case "cook_torranceButton":
@@ -102,11 +104,15 @@ function handleButton(clicked_button){
 }
 // =====================================================
 
+/*
+ *	Fonction permettant de choisir l'indice de réfraction que l'on souhaite pour la BRDF Cook-Torrance
+ */
+
 function handleIndex(indexId){
 	switch(indexId){
 		case "air":
-			index = 1.0;
-			rgbIndex = [0.0,0.0,0.0];
+			index = 1.0;												//indice de réfraction simple
+			rgbIndex = [0.0,0.0,0.0];									//indice de réfraction complexe
 			document.getElementById("air").className = "active";
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
@@ -151,7 +157,6 @@ function handleIndex(indexId){
 			break;
 		case "refrIndButton":
 			//index = document.getElementById("other").value;
-
 			var r = document.getElementById("r").value;
 			var g = document.getElementById("g").value;
 			var b = document.getElementById("b").value;

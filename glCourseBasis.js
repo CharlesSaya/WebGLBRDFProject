@@ -11,13 +11,13 @@ var distCENTER;
 var OBJ1 = null;
 var PLANE = null;
 // =====================================================
-var choice = 2;
+var choice = 2;						//Choix de BRDF
 // =====================================================
-var xLightPos = 0.0;
-var yLightPos = 0.0;
+var xLightPos = 0.0;				//Position x de la lumière			
+var yLightPos = 0.0;				//Position y de la lumière	
 // =====================================================
-var index = 1.0;
-var rgbIndex = [0.0,0.0,0.0];
+var index = 1.0;					//Indice de réfraction simple
+var rgbIndex = [0.0,0.0,0.0];		//Indice de réfraction complexe
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -65,7 +65,7 @@ class objmesh {
 		this.shader.kD = gl.getUniformLocation(this.shader, "uKd");
 		this.shader.kS = gl.getUniformLocation(this.shader, "uKs");
 		this.shader.rugosity = gl.getUniformLocation(this.shader, "uRugosity");
-		this.shader.specularityPower = gl.getUniformLocation(this.shader, "uSpecularityPower");
+		this.shader.shineCoeff = gl.getUniformLocation(this.shader, "uShineCoeff");
 
 		this.shader.refractiveIndex = gl.getUniformLocation(this.shader, "uRefractiveIndex");
 		this.shader.rgbRefractiveIndex = gl.getUniformLocation(this.shader, "uRGBRefractiveIndex");
@@ -86,7 +86,7 @@ class objmesh {
 		var kS = Math.round((1.0 - kD) * 100) / 100; //Ks arrondie a 2 décimales
 		document.getElementById("kS").innerText = kS;
 		var rugosity = document.getElementById("rugosity").value;
-		var specularityPower = document.getElementById("specularity_power").value;
+		var shineCoeff = document.getElementById("shineCoeff").value;
 
 
 		mat4.identity(mvMatrix);
@@ -100,7 +100,7 @@ class objmesh {
 						
 		gl.uniform3fv(this.shader.lightPos,[xLightPos,yLightPos,zLightPos]);
 		gl.uniform3fv(this.shader.lightPower,[lightPower,lightPower,lightPower]);
-		gl.uniform1f(this.shader.specularityPower,specularityPower);
+		gl.uniform1f(this.shader.shineCoeff,shineCoeff);
 		gl.uniform3fv(this.shader.lightColor,lightColor);
 		gl.uniform3fv(this.shader.color,color);
 

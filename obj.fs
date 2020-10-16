@@ -1,26 +1,28 @@
 
 precision mediump float;
 
-varying vec4 pos3D;
-varying vec3 N;
+varying vec4 pos3D;						//Position 3D du point
+varying vec3 N;							//Normale 
 
-uniform int uChoice;
-
-
-uniform vec3 uLightPos;
-uniform vec3 uLightPower;
-uniform vec3 uLightColor;
-uniform float uSpecularityPower;
-uniform vec3 uColor;
+uniform int uChoice;					//Choix de la BRDF
 
 
-uniform float uKd;
-uniform float uKs;
-uniform float uRugosity;
+uniform vec3 uLightPos;					//Position de la lumière
+uniform vec3 uLightPower;				//Puissance de la lumière
+uniform vec3 uLightColor;				//Couleur de la lumière
+uniform float uShineCoeff;				//Coefficient de brillance Phong
+uniform vec3 uColor;					//Couleur de l'objet
 
-uniform float uRefractiveIndex;
-uniform vec3 uRGBRefractiveIndex;
+//=====================================================
+uniform float uKd;						//Coefficient du terme diffus
+uniform float uKs;						//Coefficient du terme spéculaire
+uniform float uRugosity;				//Rugosité de l'objet
 
+//=====================================================
+uniform float uRefractiveIndex;			//Indice de réfraction simple
+uniform vec3 uRGBRefractiveIndex;		//Indice de réfraction complexe
+
+//=====================================================
 const float M_PI = 3.14159265358;
 
 // =====================================================
@@ -40,11 +42,11 @@ vec3 lambert( vec3 lightPower, float kD, vec3 normale, vec3 wi, vec3 lightcolor)
  *  Normalized phong shading
  */
 
-vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 specularColor, vec3 wi, vec3 wo, vec3 normale, float specularityPower){
+vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 specularColor, vec3 wi, vec3 wo, vec3 normale, float shineCoeff){
 	float nl =dot(normale, wi);
 	vec3 reflectedRay = normalize(reflect(-wi,normale));
 	float ro = dot(reflectedRay,wo);
-	return   (kD/M_PI * diffuseColor + kS * ((specularityPower+2.0)/2.0*M_PI) * pow(max(ro,0.0),specularityPower) * specularColor);
+	return   (kD/M_PI * diffuseColor + kS * ((shineCoeff+2.0)/2.0*M_PI) * pow(max(ro,0.0),shineCoeff) * specularColor);
 
 }
 
@@ -63,7 +65,6 @@ float fresnel(vec3 wi,vec3 halfVector, float n){
 	return (a * (1.0+b)) ;	
 }
 
-
 // =====================================================
 
 /*
@@ -75,7 +76,6 @@ vec3 schlick(vec3 wi,vec3 halfVector, vec3 rf0){
 }
 
 // =====================================================
-
 
 /*
  *  Fonction calculant le terme de distribution de la BRDF avec Beckmann
@@ -123,7 +123,7 @@ vec3 brdf(float kd, float ks, vec3 color, float fresnel,float beckmann, float co
  *  Fonction calculant la BRDF avec des indices de refraction complexes (prenant en compte plusieurs longueurs d'ondes)
  */
 
-vec3 brdfSchlick(float kd, float ks, vec3 color, vec3 fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, vec3 normale){
+vec3 brdf_with_complex_index(float kd, float ks, vec3 color, vec3 fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, vec3 normale){
 	float dot_in = abs(dot(wi,normale));
 	float dot_on = abs(dot(wo,normale));
 	return  kd/M_PI * uColor + ks *  (fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) * vec3(1.0);
@@ -132,26 +132,33 @@ vec3 brdfSchlick(float kd, float ks, vec3 color, vec3 fresnel,float beckmann, fl
 
 
 // =====================================================
+
+/*
+ *  Main calculant la couleur du fragment
+ */
+
 void main(void)
 {
 	vec3 col = vec3(0);
 	vec3 wi = normalize(uLightPos - vec3(pos3D));
 	vec3 wo = normalize(- vec3(pos3D));
-	vec3 halfVector =  normalize((wi+wo));	
+	vec3 halfVector =  normalize((wi+wo));												
 
-	float f = fresnel(wi,halfVector,uRefractiveIndex);				
-	vec3 fSchlick = schlick(wi,halfVector,uRGBRefractiveIndex);
+	float f = fresnel(wi,halfVector,uRefractiveIndex);									//valeur de fresnel avec indice de réfraction simples
+	vec3 fSchlick = schlick(wi,halfVector,uRGBRefractiveIndex);							//valeur de fresnel avec indice de réfraction complexes
 
 	float d = beckmann(N, wi,halfVector,uRugosity);
 	float g = torrance_sparrow(N, halfVector,wi,wo);
 
-	if(uChoice==0)
+	if(uChoice==0)																													
 			col = lambert(uLightPower,uKd,N,wi,uLightColor);
-	else if (uChoice == 1)
-			col =  uLightPower * phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N,uSpecularityPower)  * clamp(dot(N,wi),0.0,1.0)  * uLightColor;
-	else
-			//col =  uLightPower * brdf(uKd, uKs, uColor,f,d,g,wi,wo,N) * clamp(dot(N,wi),0.0,1.0)  * uLightColor;
-			col =  uLightPower * brdfSchlick(uKd, uKs, uColor,fSchlick,d,g,wi,wo,N) * clamp(dot(N,wi),0.0,1.0)  * uLightColor;
+
+	else if (uChoice == 1)																
+			col =  uLightPower * phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N,uShineCoeff)  * clamp(dot(N,wi),0.0,1.0)  * uLightColor;
+
+	else																					
+			col =  uLightPower * brdf_with_complex_index(uKd, uKs, uColor,fSchlick,d,g,wi,wo,N) * clamp(dot(N,wi),0.0,1.0)  * uLightColor;
+			//col =  uLightPower * brdf(uKd, uKs, uColor,f,d,g,wi,wo,N) * clamp(dot(N,wi),0.0,1.0)  * uLightColor;		//Dé-commenter pour utiliser des indices de réfraction simples
 	
 	gl_FragColor = vec4(col,1.0);
 }
