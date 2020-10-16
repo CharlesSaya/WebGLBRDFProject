@@ -83,7 +83,7 @@ class objmesh {
 		var color = convertHex(document.getElementById("color").value);	
 
 		var kD = document.getElementById("kD").value;
-		var kS = Math.round((1.0 - kD) * 100) / 100; //Ks arrondie a 2 décimales
+		var kS = Math.round((1.0 - kD) * 100) / 100; 				//Ks arrondi à 2 décimales
 		document.getElementById("kS").innerText = kS;
 		var rugosity = document.getElementById("rugosity").value;
 		var shineCoeff = document.getElementById("shineCoeff").value;
