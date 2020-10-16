@@ -8,17 +8,16 @@ var pMatrix = mat4.create();
 var rotMatrix = mat4.create();
 var distCENTER;
 // =====================================================
-
 var OBJ1 = null;
 var PLANE = null;
 // =====================================================
+var choice = 2;
+// =====================================================
 var xLightPos = 0.0;
 var yLightPos = 0.0;
+// =====================================================
 var index = 1.0;
 var rgbIndex = [0.0,0.0,0.0];
-// =====================================================
-
-var choice = 2;
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -101,19 +100,19 @@ class objmesh {
 						
 		gl.uniform3fv(this.shader.lightPos,[xLightPos,yLightPos,zLightPos]);
 		gl.uniform3fv(this.shader.lightPower,[lightPower,lightPower,lightPower]);
+		gl.uniform1f(this.shader.specularityPower,specularityPower);
 		gl.uniform3fv(this.shader.lightColor,lightColor);
 		gl.uniform3fv(this.shader.color,color);
-		gl.uniform3fv(this.shader.rgbRefractiveIndex,rgbIndex);
+
+		gl.uniform1i(this.shader.choice,choice);
 
 		gl.uniform1f(this.shader.kD,kD);
 		gl.uniform1f(this.shader.kS,kS);
-		gl.uniform1f(this.shader.specularityPower,specularityPower);
-
 		gl.uniform1f(this.shader.rugosity,rugosity);
+
 		gl.uniform1f(this.shader.refractiveIndex,index);
+		gl.uniform3fv(this.shader.rgbRefractiveIndex,rgbIndex);
 
-
-		gl.uniform1i(this.shader.choice,choice);
 
 	}
 	

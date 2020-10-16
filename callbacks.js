@@ -111,6 +111,7 @@ function handleIndex(indexId){
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
 			document.getElementById("gold").className = "";
+			document.getElementById("copper").className="";
 			break;
 		case "water":
 			index = 1.33;
@@ -119,6 +120,7 @@ function handleIndex(indexId){
 			document.getElementById("water").className = "active";
 			document.getElementById("glass").className = "";
 			document.getElementById("gold").className = "";
+			document.getElementById("copper").className="";
 			break;
 		case "glass":
 			index = 1.5;
@@ -127,6 +129,7 @@ function handleIndex(indexId){
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "active";
 			document.getElementById("gold").className = "";
+			document.getElementById("copper").className="";
 			break;
 		case "gold":
 			index = 2.484;
@@ -135,6 +138,16 @@ function handleIndex(indexId){
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
 			document.getElementById("gold").className = "active";
+			document.getElementById("copper").className="";
+			break;
+		case "copper":
+			index = 2.484;
+			rgbIndex = [0.95,0.64,0.54];
+			document.getElementById("air").className = "";
+			document.getElementById("water").className = "";
+			document.getElementById("glass").className = "";
+			document.getElementById("gold").className = "";
+			document.getElementById("copper").className="active";
 			break;
 		case "refrIndButton":
 			//index = document.getElementById("other").value;
@@ -147,6 +160,7 @@ function handleIndex(indexId){
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
 			document.getElementById("gold").className = "";
+			document.getElementById("copper").className="";
 			break;
 		default:
 			index = 1.0;
@@ -154,6 +168,7 @@ function handleIndex(indexId){
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
 			document.getElementById("gold").className = "";
+			document.getElementById("copper").className="";
 			break;
 			
 	}
