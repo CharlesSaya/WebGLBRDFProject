@@ -178,7 +178,9 @@ function handleIndex(indexId){
 			
 	}
 	
-	//	document.getElementById("other").value = index;
+	document.getElementById("r").value = rgbIndex[0];
+	document.getElementById("g").value = rgbIndex[1];
+	document.getElementById("b").value = rgbIndex[2];
 }
 
 // =====================================================
