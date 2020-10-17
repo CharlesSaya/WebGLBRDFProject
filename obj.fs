@@ -44,8 +44,8 @@ vec3 lambert(vec3 diffuseColor, float kD, vec3 normale, vec3 wi){
 
 vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 wi, vec3 wo, vec3 normale, float shineCoeff){
 	vec3 reflectedRay = normalize(reflect(-wi,normale));
-	float ro = dot(reflectedRay,wo);
-	return  (kD/M_PI * diffuseColor + kS * ((shineCoeff+2.0)/2.0*M_PI) * pow(max(ro,0.0),shineCoeff));
+	float dot_ro = dot(reflectedRay,wo);
+	return  (kD/M_PI * diffuseColor + kS * ((shineCoeff+2.0)/2.0*M_PI) * pow(max(dot_ro,0.0),shineCoeff));
 
 }
 
@@ -113,19 +113,19 @@ float gaf_torrance_sparrow(float dot_nh, float dot_no, float dot_ni, float dot_o
  */
 
 
-vec3 cook_torrance(float kd, float ks, vec3 color, vec3 wi, vec3 wo, vec3 normale, float refractiveIndex, float rugosity){
+vec3 cook_torrance_with_simple_index(float kd, float ks, vec3 color, vec3 wi, vec3 wo, vec3 normale, float refractiveIndex, float rugosity){
 
 	vec3 halfVector =  normalize((wi+wo));		
 
-	float dot_ni =  max(0.0,dot(wi,normale));
+	float dot_ni =  max(0.0,dot(wi,normale));									
 	float dot_no =  max(0.0,dot(wo,normale));	
 	float dot_nh =  max(0.0,dot(normale,halfVector));
 	float dot_oh =  max(0.0,dot(wo,halfVector));		
 	float dot_ih =  max(0.0,dot(wi,halfVector));						
 
 	float f = fresnel(dot_ih, refractiveIndex);									//valeur de fresnel avec indice de réfraction simples
-	float d = beckmann(dot_nh, rugosity);
-	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni, dot_oh, dot_ih);
+	float d = beckmann(dot_nh, rugosity);										//terme de distribution
+	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni, dot_oh, dot_ih);		//terme de géométrie
 
 	return  (1.0-f)/M_PI * uColor +  (f * g * d /(4.0*dot_ni*dot_no));
 }
@@ -147,8 +147,8 @@ vec3 cook_torrance_with_complex_index(float kd, float ks, vec3 color, vec3 wi, v
 	float dot_ih =  max(0.0,dot(wi,halfVector));
 
 	vec3  f = fresnel_schlick(dot_ih, refractiveIndex);							//valeur de fresnel avec indice de réfraction complexes
-	float d = beckmann(dot_nh, rugosity);
-	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni, dot_oh, dot_ih);
+	float d = beckmann(dot_nh, rugosity);										//terme de distribution
+	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni, dot_oh, dot_ih);		//terme de géométrie
 
 	return  (f * g * d /(4.0*dot_ni*dot_no)); 
 }
@@ -164,21 +164,21 @@ void main(void)
 {
 	vec3 col = vec3(0);
 	vec3 wi = normalize(uLightPos - vec3(pos3D));
-	vec3 wo = normalize(- vec3(pos3D));
+	vec3 wo = normalize(- vec3(pos3D));							//caméra en (0,0,0)
 
 	float dot_ni = max(dot(N,wi),0.0);	
 	
 	if(uChoice==0)																													
-			col =  uLightPower * uLightColor * lambert(uColor,uKd,N,wi);
+			col =  uLightPower * uLightColor * lambert(uColor,uKd,N,wi);																				//lambert
 
 	else if (uChoice == 1)																
-			col =  uLightPower * uLightColor * phong(uKd, uKs, uColor,wi,wo,N,uShineCoeff) * dot_ni ;
+			col =  uLightPower * uLightColor * phong(uKd, uKs, uColor,wi,wo,N,uShineCoeff) * dot_ni ;													//phong normalisé
 			
 	else if(uChoice == 2)
-			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, uColor, wi, wo, N, uRGBRefractiveIndex,uRugosity) * dot_ni;
+			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, uColor, wi, wo, N, uRGBRefractiveIndex,uRugosity) * dot_ni;	//Cook-Torrance indices complexes
 
 	else																		
-			col =  uLightPower * uLightColor * cook_torrance(uKd, uKs, uColor,wi,wo,N,uRefractiveIndex,uRugosity) * dot_ni;
+			col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, uColor,wi,wo,N,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices simples
 
 	gl_FragColor = vec4(col,1.0);
 }
