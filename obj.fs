@@ -174,9 +174,11 @@ void main(void)
 	else if (uChoice == 1)																
 			col =  uLightPower * uLightColor * phong(uKd, uKs, uColor,wi,wo,N,uShineCoeff)  * dot_ni ;
 			
-	else																					
+	else if(uChoice == 2)
 			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, uColor, wi, wo, N, uRGBRefractiveIndex,uRugosity) * dot_ni;
-			//col =  uLightPower * uLightColor * cook_torrance(uKd, uKs, uColor,wi,wo,N,uRefractiveIndex,uRugosity) * max(dot(N,wi),0.0);		//Dé-commenter pour utiliser des indices de réfraction simples
+
+	else																		
+			col =  uLightPower * uLightColor * cook_torrance(uKd, uKs, uColor,wi,wo,N,uRefractiveIndex,uRugosity) *  dot_ni;
 
 	gl_FragColor = vec4(col,1.0);
 }

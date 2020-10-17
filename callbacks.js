@@ -68,35 +68,81 @@ function handleButton(clicked_button){
 	node2 = document.getElementById("refractiveChoice");
 	node3 = document.getElementById("phong_specularity");
 
+	node4 = document.getElementById("rgbIndexDiv");
+	node5 = document.getElementById("simpleIndexDiv");
+
+	metal = document.getElementById("metal");
+	dielectric = document.getElementById("dielectric");
+
 	switch(clicked_button){
-		case "cook_torranceButton":
-			node0.style.visibility = "visible";
-			node1.style.visibility = "visible";
-			node2.style.visibility = "visible";
-			node3.style.visibility = "hidden";
+		case "scook_torranceButton":
+			node0.style.display = "inline";
+			node1.style.display = "none";
+			node2.style.display = "inline";
+			node3.style.display = "none";
+			node4.style.display = "none";
+			node5.style.display = "inline";
+
+			dielectric.style.display = "inline";
+			metal.style.display = "none";
+
+			document.getElementById(clicked_button).disabled = true;
+			document.getElementById("rcook_torranceButton").disabled = false;
+			document.getElementById("phongButton").disabled = false;
+			document.getElementById("lambertButton").disabled = false;
+			choice = 3;
+			break;
+		case "rcook_torranceButton":
+			node0.style.display = "inline";
+			node1.style.display = "none";
+			node2.style.display = "inline";
+			node3.style.display = "none";
+			node4.style.display = "inline";
+			node5.style.display = "none";
+
+			dielectric.style.display = "none";
+			metal.style.display = "inline";
+
+			document.getElementById("scook_torranceButton").disabled = false;
 			document.getElementById(clicked_button).disabled = true;
 			document.getElementById("phongButton").disabled = false;
 			document.getElementById("lambertButton").disabled = false;
 			choice = 2;
 			break;
 		case "phongButton":
-			node1.style.visibility = "visible";
-			node0.style.visibility = "hidden";
-			node2.style.visibility = "hidden";
-			node3.style.visibility = "visible";	
+			node0.style.display = "none";
+			node1.style.display = "inline";
+			node2.style.display = "none";
+			node3.style.display = "inline";
+			node4.style.display = "none";
+			node5.style.display = "none";
+
+			dielectric.style.display = "none";
+			metal.style.display = "none";
+
+
 			document.getElementById(clicked_button).disabled = true;
-			document.getElementById("cook_torranceButton").disabled = false;
+			document.getElementById("scook_torranceButton").disabled = false;
+			document.getElementById("rcook_torranceButton").disabled = false;
 			document.getElementById("lambertButton").disabled = false;
 			choice = 1;
 			break;
 		default:
-			node0.style.visibility = "hidden";
-			node1.style.visibility = "hidden";
-			node2.style.visibility = "hidden";
-			node3.style.visibility = "hidden";
+			node0.style.display = "none";
+			node1.style.display = "none";
+			node2.style.display = "none";
+			node3.style.display = "none";
+			node4.style.display = "none";
+			node5.style.display = "none";
+
+			dielectric.style.display = "none";
+			metal.style.display = "none";
+
+
 			document.getElementById(clicked_button).disabled = true;
 			document.getElementById("phongButton").disabled = false;
-			document.getElementById("cook_torranceButton").disabled = false;
+			document.getElementById("scook_torranceButton").disabled = false;
+			document.getElementById("rcook_torranceButton").disabled = false;
 			choice = 0;
 			break;
 			
@@ -112,60 +158,59 @@ function handleIndex(indexId){
 	switch(indexId){
 		case "air":
 			index = 1.0;												//indice de réfraction simple
-			rgbIndex = [0.0,0.0,0.0];									//indice de réfraction complexe
 			document.getElementById("air").className = "active";
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
-			document.getElementById("gold").className = "";
-			document.getElementById("copper").className="";
+			document.getElementById("titane").className = "";
 			break;
 		case "water":
 			index = 1.33;
-			rgbIndex = [0.02,0.02,0.02];
 			document.getElementById("air").className = "";
 			document.getElementById("water").className = "active";
 			document.getElementById("glass").className = "";
-			document.getElementById("gold").className = "";
-			document.getElementById("copper").className="";
+			document.getElementById("titane").className = "";
+
 			break;
 		case "glass":
 			index = 1.5;
-			rgbIndex = [0.08,0.08,0.08];
 			document.getElementById("air").className = "";
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "active";
-			document.getElementById("gold").className = "";
-			document.getElementById("copper").className="";
+			document.getElementById("titane").className = "";
+
 			break;
-		case "gold":
+		case "titane":
 			index = 2.484;
-			rgbIndex = [1.00,0.71,0.29];
 			document.getElementById("air").className = "";
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
+			document.getElementById("titane").className = "active";
+			break;
+		case "gold":
+			rgbIndex = [1.00,0.71,0.29];								//indice de réfraction complexe
 			document.getElementById("gold").className = "active";
 			document.getElementById("copper").className="";
 			break;
 		case "copper":
-			index = 2.484;
 			rgbIndex = [0.95,0.64,0.54];
-			document.getElementById("air").className = "";
-			document.getElementById("water").className = "";
-			document.getElementById("glass").className = "";
 			document.getElementById("gold").className = "";
 			document.getElementById("copper").className="active";
 			break;
-		case "refrIndButton":
-			//index = document.getElementById("other").value;
+		case "complexIndexButton":
 			var r = document.getElementById("r").value;
 			var g = document.getElementById("g").value;
 			var b = document.getElementById("b").value;
 			rgbIndex = [r,g,b];
+			document.getElementById("gold").className = "";
+			document.getElementById("copper").className="";
+			break;
+
+		case "simpleIndexButton":
+			index = document.getElementById("simpleIndex").value;												
 			document.getElementById("air").className = "";
 			document.getElementById("water").className = "";
 			document.getElementById("glass").className = "";
-			document.getElementById("gold").className = "";
-			document.getElementById("copper").className="";
+			document.getElementById("titane").className = "";
 			break;
 		default:
 			index = 1.0;
@@ -181,6 +226,7 @@ function handleIndex(indexId){
 	document.getElementById("r").value = rgbIndex[0];
 	document.getElementById("g").value = rgbIndex[1];
 	document.getElementById("b").value = rgbIndex[2];
+	document.getElementById("simpleIndex").value = index;
 }
 
 // =====================================================

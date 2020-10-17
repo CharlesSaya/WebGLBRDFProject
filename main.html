@@ -29,7 +29,7 @@
 					<label for="zPos">Light position Z : <span class="zPos"></span></label>	<br /><input type="range" min="-10" max="10" value="5" class="slider" id="zPos"><br><br>
 					<label for="power">Light power : <span class="power"></span></label>	<br /><input type="range" min="1" max="20"  value="3" class="slider" id="power"><br><br>
 
-					<div id = "coeff_param">
+					<div id = "coeff_param" style="display:none;">
 						<label for="kD"> Coefficients : ( kD = <span class="kD"></span> , kS = <span id="kS">..loading..</span> ) </label> <br />	
 						<input type=range class="slider" id="kD" min =0 max=1 step=0.01 value=0.5 /> <br /><br/>
 					</div>
@@ -38,8 +38,8 @@
 						<label for="rugosity"> Rugosity : <span class="rugosity"></span> <br /> </label><input type=range class="slider" id="rugosity" min =0.05 max=1 step=0.01 value="0.5" /><br /><br />
 					</div>
 
-					<div id="phong_specularity" style="visibility: hidden;" >
-						<label for="shineCoeff"> Coefficient de brillance : <span class="shineCoeff"></span> <br /> </label><input type=range class="slider" id="shineCoeff" min =1.0 max=200 step=1.0 value="20" /><br /><br />
+					<div id="phong_specularity" style="display:none;">
+						<label for="shineCoeff"> Coefficient de brillance : <span class="shineCoeff"></span> <br /> </label><input type=range class="slider" id="shineCoeff" min =1.0 max=200 step=1.0 value="100" /><br /><br />
 						</div>
 
 				</div>
@@ -60,25 +60,44 @@
 		</div>
 		<div class="box" id="other_settings" >
 			<div id="mode_choice">
-				<button id="cook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance</button>
+				<button id="scook_torranceButton" onclick="handleButton(this.id)" disabled>Cook-Torrance (r&eacute;fraction simple)</button>
+				<button id="rcook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance (r&eacute;fraction complexe)</button>
 				<button id="phongButton" onclick="handleButton(this.id)">Phong</button>
 				<button id="lambertButton" onclick="handleButton(this.id)">Lambert</button>
 			</div> <br> <br>
 
 			<div id = "refractiveChoice">
-				Refraction index : <br>
-				<img src="air.png" id = "air" width="60" height="60" onclick="handleIndex(this.id)" >
-				<img src="water.jpg" id = "water" width="60" height="60" onclick="handleIndex(this.id)">
-				<img src="verre.jpg" id = "glass" width="60" height="60" onclick="handleIndex(this.id)">
-				<img src="gold.jpg" id = "gold" width="60" height="60" onclick="handleIndex(this.id)">
-				<img src="copper.png" id = "copper" width="60" height="60" onclick="handleIndex(this.id)"></br>
+				Choix indice de refraction : <br>
 
-				R : <input type="number" min ="0" max ="1" id="r" step="0.0	1" value="0.0"> <br>
-				G : <input type="number" min ="0" max ="1" id="g" step="0.01" value="0.0"> <br>
-				B : <input type="number" min ="0" max ="1" id="b" step="0.01" value="0.0"> <br>
-				<button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button>
+				<div id="dielectric">
 
-				<!--<input type="number" min ="0" max ="10" id="other" step="0.001" > <button id="refrIndButton" onclick="handleIndex(this.id)">Choisir</button>-->
+					<img src="air.png" id = "air" width="80" height="80" onclick="handleIndex(this.id)" >
+					<img src="water.jpg" id = "water" width="80" height="80" onclick="handleIndex(this.id)">
+					<img src="verre.jpg" id = "glass" width="80" height="80" onclick="handleIndex(this.id)">
+					<img src="titane.jpg" id = "titane" width="80" height="80" onclick="handleIndex(this.id)">
+
+				</div>
+
+				<div id="metal" style="display:none;">
+
+					<img src="gold.jpg" id = "gold" width="80" height="80" onclick="handleIndex(this.id)" >
+					<img src="copper.png" id = "copper" width="80" height="80" onclick="handleIndex(this.id)"></br>
+
+				</div></br>
+
+				<div id="rgbIndexDiv" style="display:none;" >
+					<p>Indice particulier : </p>
+					R : <input type="number" min ="0" max ="1" id="r" step="0.0	1" value="0.0"> <br>
+					G : <input type="number" min ="0" max ="1" id="g" step="0.01" value="0.0"> <br>
+					B : <input type="number" min ="0" max ="1" id="b" step="0.01" value="0.0"> <br>
+					<button id="complexIndexButton" onclick="handleIndex(this.id)">Choisir</button></span></br>
+				</div>
+
+				<div id="simpleIndexDiv">
+					<p>Indice particulier : </p>
+					<input type="number" min ="1" max ="10" id="simpleIndex" step="0.01" value="1">
+					<button id="simpleIndexButton" onclick="handleIndex(this.id)">Choisir</button><br>
+				</div>
 			</div>
 		</div>
 		<div class="box" id="commands">

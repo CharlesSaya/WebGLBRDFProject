@@ -11,7 +11,7 @@ var distCENTER;
 var OBJ1 = null;
 var PLANE = null;
 // =====================================================
-var choice = 2;						//Choix de BRDF
+var choice = 3;						//Choix de BRDF
 // =====================================================
 var xLightPos = 0.0;				//Position x de la lumière			
 var yLightPos = 0.0;				//Position y de la lumière	
