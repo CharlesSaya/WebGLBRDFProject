@@ -59,6 +59,7 @@
 				
 		</div>
 		<div class="box" id="other_settings" >
+			<h3>Autres param&egrave;tres</h3>
 			<div id="mode_choice">
 				<button id="scook_torranceButton" onclick="handleButton(this.id)" disabled>Cook-Torrance (r&eacute;fraction simple)</button>
 				<button id="rcook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance (r&eacute;fraction complexe)</button>
@@ -80,16 +81,18 @@
 
 				<div id="metal" style="display:none;">
 
+					<img src="iron.jpg" id = "iron" width="80" height="80" onclick="handleIndex(this.id)">
 					<img src="gold.jpg" id = "gold" width="80" height="80" onclick="handleIndex(this.id)" >
-					<img src="copper.png" id = "copper" width="80" height="80" onclick="handleIndex(this.id)"></br>
+					<img src="copper.png" id = "copper" width="80" height="80" onclick="handleIndex(this.id)">
+					<img src="aluminium.jpg" id = "aluminium" width="80" height="80" onclick="handleIndex(this.id)"></br>
 
 				</div></br>
 
 				<div id="rgbIndexDiv" style="display:none;" >
 					<p>Indice particulier : </p>
-					R : <input type="number" min ="0" max ="1" id="r" step="0.0	1" value="0.0"> <br>
-					G : <input type="number" min ="0" max ="1" id="g" step="0.01" value="0.0"> <br>
-					B : <input type="number" min ="0" max ="1" id="b" step="0.01" value="0.0"> <br>
+					R : <input type="number" min ="0" max ="1" id="r" step="0.01" value="0.56"> <br>
+					G : <input type="number" min ="0" max ="1" id="g" step="0.01" value="0.57"> <br>
+					B : <input type="number" min ="0" max ="1" id="b" step="0.01" value="0.58"> <br>
 					<button id="complexIndexButton" onclick="handleIndex(this.id)">Choisir</button></span></br>
 				</div>
 

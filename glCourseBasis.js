@@ -16,8 +16,8 @@ var choice = 3;						//Choix de BRDF
 var xLightPos = 0.0;				//Position x de la lumière			
 var yLightPos = 0.0;				//Position y de la lumière	
 // =====================================================
-var index = 1.0;					//Indice de réfraction simple
-var rgbIndex = [0.0,0.0,0.0];		//Indice de réfraction complexe
+var index = 1.0;					//Indice de réfraction simple (par defaut : Vide)
+var rgbIndex = [0.56,0.57,0.58];	//Indice de réfraction complexe (par defaut : Fer)
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -61,11 +61,11 @@ class objmesh {
 		this.shader.lightPower = gl.getUniformLocation(this.shader, "uLightPower");
 		this.shader.lightColor = gl.getUniformLocation(this.shader, "uLightColor");
 		this.shader.color = gl.getUniformLocation(this.shader, "uColor");
+		this.shader.shineCoeff = gl.getUniformLocation(this.shader, "uShineCoeff");
 
 		this.shader.kD = gl.getUniformLocation(this.shader, "uKd");
 		this.shader.kS = gl.getUniformLocation(this.shader, "uKs");
 		this.shader.rugosity = gl.getUniformLocation(this.shader, "uRugosity");
-		this.shader.shineCoeff = gl.getUniformLocation(this.shader, "uShineCoeff");
 
 		this.shader.refractiveIndex = gl.getUniformLocation(this.shader, "uRefractiveIndex");
 		this.shader.rgbRefractiveIndex = gl.getUniformLocation(this.shader, "uRGBRefractiveIndex");
@@ -100,11 +100,9 @@ class objmesh {
 						
 		gl.uniform3fv(this.shader.lightPos,[xLightPos,yLightPos,zLightPos]);
 		gl.uniform3fv(this.shader.lightPower,[lightPower,lightPower,lightPower]);
-		gl.uniform1f(this.shader.shineCoeff,shineCoeff);
 		gl.uniform3fv(this.shader.lightColor,lightColor);
 		gl.uniform3fv(this.shader.color,color);
-
-		gl.uniform1i(this.shader.choice,choice);
+		gl.uniform1f(this.shader.shineCoeff,shineCoeff);
 
 		gl.uniform1f(this.shader.kD,kD);
 		gl.uniform1f(this.shader.kS,kS);
@@ -112,6 +110,8 @@ class objmesh {
 
 		gl.uniform1f(this.shader.refractiveIndex,index);
 		gl.uniform3fv(this.shader.rgbRefractiveIndex,rgbIndex);
+
+		gl.uniform1i(this.shader.choice,choice);
 
 
 	}

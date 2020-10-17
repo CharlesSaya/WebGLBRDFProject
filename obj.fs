@@ -100,7 +100,7 @@ float beckmann(float dot_nh, float rugosity ){
  *  Fonction calculant le terme de masquage de la BRDF avec Torrance-Sparrow
  */
 
-float gaf_torrance_sparrow(float dot_nh,float dot_no,float dot_ni, float dot_oh,float dot_ih){
+float gaf_torrance_sparrow(float dot_nh, float dot_no, float dot_ni, float dot_oh, float dot_ih){
 	float a = 2.0 * dot_nh * dot_no /(dot_oh);
 	float b = 2.0 * dot_nh * dot_ni /(dot_ih);
 	return min(1.0,min(a,b));
@@ -124,8 +124,8 @@ vec3 cook_torrance(float kd, float ks, vec3 color, vec3 wi, vec3 wo, vec3 normal
 	float dot_ih =  max(0.0,dot(wi,halfVector));						
 
 	float f = fresnel(dot_ih, refractiveIndex);									//valeur de fresnel avec indice de réfraction simples
-	float d = beckmann(dot_nh,rugosity);
-	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni,dot_oh, dot_ih);
+	float d = beckmann(dot_nh, rugosity);
+	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni, dot_oh, dot_ih);
 
 	return  (1.0-f)/M_PI * uColor +  (f * g * d /(4.0*dot_ni*dot_no));
 }
@@ -146,9 +146,9 @@ vec3 cook_torrance_with_complex_index(float kd, float ks, vec3 color, vec3 wi, v
 	float dot_oh =  max(0.0,dot(wo,halfVector));		
 	float dot_ih =  max(0.0,dot(wi,halfVector));
 
-	vec3 f = fresnel_schlick(dot_ih,refractiveIndex);							//valeur de fresnel avec indice de réfraction complexes
-	float d = beckmann(dot_nh,rugosity);
-	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni,dot_oh, dot_ih);
+	vec3  f = fresnel_schlick(dot_ih, refractiveIndex);							//valeur de fresnel avec indice de réfraction complexes
+	float d = beckmann(dot_nh, rugosity);
+	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni, dot_oh, dot_ih);
 
 	return  (f * g * d /(4.0*dot_ni*dot_no)); 
 }
@@ -166,19 +166,19 @@ void main(void)
 	vec3 wi = normalize(uLightPos - vec3(pos3D));
 	vec3 wo = normalize(- vec3(pos3D));
 
-	float dot_ni=max(dot(N,wi),0.0);	
+	float dot_ni = max(dot(N,wi),0.0);	
 	
 	if(uChoice==0)																													
-			col =  uLightPower *  uLightColor *lambert(uColor,uKd,N,wi);
+			col =  uLightPower * uLightColor * lambert(uColor,uKd,N,wi);
 
 	else if (uChoice == 1)																
-			col =  uLightPower * uLightColor * phong(uKd, uKs, uColor,wi,wo,N,uShineCoeff)  * dot_ni ;
+			col =  uLightPower * uLightColor * phong(uKd, uKs, uColor,wi,wo,N,uShineCoeff) * dot_ni ;
 			
 	else if(uChoice == 2)
 			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, uColor, wi, wo, N, uRGBRefractiveIndex,uRugosity) * dot_ni;
 
 	else																		
-			col =  uLightPower * uLightColor * cook_torrance(uKd, uKs, uColor,wi,wo,N,uRefractiveIndex,uRugosity) *  dot_ni;
+			col =  uLightPower * uLightColor * cook_torrance(uKd, uKs, uColor,wi,wo,N,uRefractiveIndex,uRugosity) * dot_ni;
 
 	gl_FragColor = vec4(col,1.0);
 }
