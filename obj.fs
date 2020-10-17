@@ -31,9 +31,9 @@ const float M_PI = 3.14159265358;
  *  Lambert shading
  */
 
-vec3 lambert( vec3 lightPower, float kD, vec3 normale, vec3 wi, vec3 lightcolor){
-	float dotValue = dot(normale,wi);
-	return lightPower * kD/M_PI * uColor * clamp(dotValue,0.0,1.0) * lightcolor;
+vec3 lambert(vec3 diffuseColor, float kD, vec3 normale, vec3 wi){
+	float dot_ni = max(0.0,dot(normale,wi));
+	return  kD/M_PI * diffuseColor * dot_ni;
 }
 
 // =====================================================
@@ -42,11 +42,10 @@ vec3 lambert( vec3 lightPower, float kD, vec3 normale, vec3 wi, vec3 lightcolor)
  *  Normalized phong shading
  */
 
-vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 specularColor, vec3 wi, vec3 wo, vec3 normale, float shineCoeff){
-	float nl =dot(normale, wi);
+vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 wi, vec3 wo, vec3 normale, float shineCoeff){
 	vec3 reflectedRay = normalize(reflect(-wi,normale));
 	float ro = dot(reflectedRay,wo);
-	return   (kD/M_PI * diffuseColor + kS * ((shineCoeff+2.0)/2.0*M_PI) * pow(max(ro,0.0),shineCoeff) * specularColor);
+	return  (kD/M_PI * diffuseColor + kS * ((shineCoeff+2.0)/2.0*M_PI) * pow(max(ro,0.0),shineCoeff));
 
 }
 
@@ -56,12 +55,15 @@ vec3 phong(float kD, float kS, vec3 diffuseColor, vec3 specularColor, vec3 wi, v
  *  Fonction calculant le terme de fresnel de la BRDF
  */
 
-float fresnel(vec3 wi,vec3 halfVector, float n){
+float fresnel(float dot_ih, float n){
 
-	float c = abs(dot(wi,halfVector));
+	float c = abs(dot_ih);
 	float g = sqrt(n*n + c * c -1.0);
-	float a = 0.5 * (g-c)*(g-c) / ((g+c)*(g+c));
-	float b = (c*(g+c)-1.0) * (c*(g+c)-1.0) / ( (c*(g-c) +1.0) * (c*(g-c) +1.0));
+	float gmc = g-c;
+	float gpc = g+c;
+
+	float a = 0.5 * gmc*gmc / (gpc*gpc);
+	float b = (c*gpc-1.0) * (c*gpc-1.0) / ( (c*gmc+1.0) * (c*gmc +1.0));
 	return (a * (1.0+b)) ;	
 }
 
@@ -71,8 +73,8 @@ float fresnel(vec3 wi,vec3 halfVector, float n){
  *  Fonction calculant le terme de fresnel de la BRDF avec l'approximation de Schlick
  */
 
-vec3 schlick(vec3 wi,vec3 halfVector, vec3 rf0){
-	return rf0 + (1.0-rf0)*pow(1.0-dot(halfVector,wi),5.0); 
+vec3 fresnel_schlick(float dot_ih, vec3 rf0){
+	return rf0 + (1.0-rf0)*pow(1.0-dot_ih,5.0); 
 }
 
 // =====================================================
@@ -82,13 +84,14 @@ vec3 schlick(vec3 wi,vec3 halfVector, vec3 rf0){
  */
 
 
-float beckmann(vec3 normale, vec3 wi, vec3 halfVector, float rugosity ){
-	float theta = acos(dot(normale, halfVector));
-	float a = exp(-tan(theta)*tan(theta)/(2.0*rugosity*rugosity));
-	float b = M_PI * rugosity * rugosity * pow(cos(theta),4.0);
+float beckmann(float dot_nh, float rugosity ){
+	float cosTm2 = dot_nh * dot_nh;
+	float sinTm2 = 1.0 - cosTm2;
+	float tanTm2 = sinTm2 / cosTm2;
+	float a = exp(-tanTm2/(2.0*rugosity*rugosity));
+	float b = M_PI * rugosity * rugosity * cosTm2 * cosTm2;
 	return a/b;
 }
-
 
 
 // =====================================================
@@ -97,9 +100,9 @@ float beckmann(vec3 normale, vec3 wi, vec3 halfVector, float rugosity ){
  *  Fonction calculant le terme de masquage de la BRDF avec Torrance-Sparrow
  */
 
-float torrance_sparrow(vec3 normale, vec3 halfVector, vec3 wi, vec3 wo){
-	float a = 2.0 * dot(normale,halfVector) * dot(normale,wo) /(dot(wo,halfVector));
-	float b = 2.0 * dot(normale,halfVector) * dot(normale,wi) /(dot(wi,halfVector));
+float gaf_torrance_sparrow(float dot_nh,float dot_no,float dot_ni, float dot_oh,float dot_ih){
+	float a = 2.0 * dot_nh * dot_no /(dot_oh);
+	float b = 2.0 * dot_nh * dot_ni /(dot_ih);
 	return min(1.0,min(a,b));
 }
 
@@ -110,11 +113,21 @@ float torrance_sparrow(vec3 normale, vec3 halfVector, vec3 wi, vec3 wo){
  */
 
 
-vec3 brdf(float kd, float ks, vec3 color, float fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, vec3 normale){
-	float dot_in = abs(dot(wi,normale));
-	float dot_on = abs(dot(wo,normale));
+vec3 cook_torrance(float kd, float ks, vec3 color, vec3 wi, vec3 wo, vec3 normale, float refractiveIndex, float rugosity){
 
-	return  kd/M_PI * uColor + ks *  (fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) * vec3(1.0);
+	vec3 halfVector =  normalize((wi+wo));		
+
+	float dot_ni =  max(0.0,dot(wi,normale));
+	float dot_no =  max(0.0,dot(wo,normale));	
+	float dot_nh =  max(0.0,dot(normale,halfVector));
+	float dot_oh =  max(0.0,dot(wo,halfVector));		
+	float dot_ih =  max(0.0,dot(wi,halfVector));						
+
+	float f = fresnel(dot_ih, refractiveIndex);									//valeur de fresnel avec indice de réfraction simples
+	float d = beckmann(dot_nh,rugosity);
+	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni,dot_oh, dot_ih);
+
+	return  (1.0-f)/M_PI * uColor +  (f * g * d /(4.0*dot_ni*dot_no));
 }
 
 // =====================================================
@@ -123,12 +136,22 @@ vec3 brdf(float kd, float ks, vec3 color, float fresnel,float beckmann, float co
  *  Fonction calculant la BRDF avec des indices de refraction complexes (prenant en compte plusieurs longueurs d'ondes)
  */
 
-vec3 brdf_with_complex_index(float kd, float ks, vec3 color, vec3 fresnel,float beckmann, float cook_torrance, vec3 wi, vec3 wo, vec3 normale){
-	float dot_in = abs(dot(wi,normale));
-	float dot_on = abs(dot(wo,normale));
-	return  kd/M_PI * uColor + ks *  (fresnel * cook_torrance * beckmann /(4.0*dot_in*dot_on)) * vec3(1.0);
-}
+vec3 cook_torrance_with_complex_index(float kd, float ks, vec3 color, vec3 wi, vec3 wo, vec3 normale, vec3 refractiveIndex, float rugosity){
 
+	vec3 halfVector =  normalize((wi+wo));	
+
+	float dot_ni =  max(0.0,dot(wi,normale));
+	float dot_no =  max(0.0,dot(wo,normale));	
+	float dot_nh =  max(0.0,dot(normale,halfVector));
+	float dot_oh =  max(0.0,dot(wo,halfVector));		
+	float dot_ih =  max(0.0,dot(wi,halfVector));
+
+	vec3 f = fresnel_schlick(dot_ih,refractiveIndex);							//valeur de fresnel avec indice de réfraction complexes
+	float d = beckmann(dot_nh,rugosity);
+	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni,dot_oh, dot_ih);
+
+	return  (f * g * d /(4.0*dot_ni*dot_no)); 
+}
 
 
 // =====================================================
@@ -142,24 +165,19 @@ void main(void)
 	vec3 col = vec3(0);
 	vec3 wi = normalize(uLightPos - vec3(pos3D));
 	vec3 wo = normalize(- vec3(pos3D));
-	vec3 halfVector =  normalize((wi+wo));												
 
-	float f = fresnel(wi,halfVector,uRefractiveIndex);									//valeur de fresnel avec indice de réfraction simples
-	vec3 fSchlick = schlick(wi,halfVector,uRGBRefractiveIndex);							//valeur de fresnel avec indice de réfraction complexes
-
-	float d = beckmann(N, wi,halfVector,uRugosity);
-	float g = torrance_sparrow(N, halfVector,wi,wo);
-
+	float dot_ni=max(dot(N,wi),0.0);	
+	
 	if(uChoice==0)																													
-			col = lambert(uLightPower,uKd,N,wi,uLightColor);
+			col =  uLightPower *  uLightColor *lambert(uColor,uKd,N,wi);
 
 	else if (uChoice == 1)																
-			col =  uLightPower * phong(uKd, uKs, uColor,vec3(1.0),wi,wo,N,uShineCoeff)  * clamp(dot(N,wi),0.0,1.0)  * uLightColor;
-
+			col =  uLightPower * uLightColor * phong(uKd, uKs, uColor,wi,wo,N,uShineCoeff)  * dot_ni ;
+			
 	else																					
-			col =  uLightPower * brdf_with_complex_index(uKd, uKs, uColor,fSchlick,d,g,wi,wo,N) * clamp(dot(N,wi),0.0,1.0)  * uLightColor;
-			//col =  uLightPower * brdf(uKd, uKs, uColor,f,d,g,wi,wo,N) * clamp(dot(N,wi),0.0,1.0)  * uLightColor;		//Dé-commenter pour utiliser des indices de réfraction simples
-	
+			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, uColor, wi, wo, N, uRGBRefractiveIndex,uRugosity) * dot_ni;
+			//col =  uLightPower * uLightColor * cook_torrance(uKd, uKs, uColor,wi,wo,N,uRefractiveIndex,uRugosity) * max(dot(N,wi),0.0);		//Dé-commenter pour utiliser des indices de réfraction simples
+
 	gl_FragColor = vec4(col,1.0);
 }
 
