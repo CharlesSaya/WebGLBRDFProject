@@ -190,7 +190,7 @@ function handleIndex(indexId){
 			index = document.getElementById("simpleIndex").value;
 			break;
 		default:
-			index = 1.0;
+			index =  1.00027;
 			rgbIndex = [0.56,0.57,0.58];
 			break;
 			

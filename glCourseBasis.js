@@ -16,7 +16,7 @@ var choice = 3;						//Choix de BRDF
 var xLightPos = 0.0;				//Position x de la lumière			
 var yLightPos = 0.0;				//Position y de la lumière	
 // =====================================================
-var index = 1.0;					//Indice de réfraction simple (par defaut : Vide)
+var index = 1.00027;					//Indice de réfraction simple (par defaut : Vide)
 var rgbIndex = [0.56,0.57,0.58];	//Indice de réfraction complexe (par defaut : Fer)
 
 // =====================================================
