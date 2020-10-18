@@ -72,27 +72,29 @@
 
 				<div id="dielectric">
 
-					<img src="air.png" id = "air" width="80" height="80" onclick="handleIndex(this.id)" class="active">
-					<img src="water.jpg" id = "water" width="80" height="80" onclick="handleIndex(this.id)">
-					<img src="verre.jpg" id = "glass" width="80" height="80" onclick="handleIndex(this.id)">
-					<img src="titane.jpg" id = "titane" width="80" height="80" onclick="handleIndex(this.id)">
+					<img src="air.png" alt="Air" id="air" width="80" height="80" onclick="handleIndex(this.id)" class="active">
+					<img src="water.jpg" alt="Water" id="water" width="80" height="80" onclick="handleIndex(this.id)">
+					<img src="verre.jpg" alt="Glass" id="glass" width="80" height="80" onclick="handleIndex(this.id)">
+					<img src="titane.jpg" alt="Titane" id="titane" width="80" height="80" onclick="handleIndex(this.id)"><br>
+					<span>&ensp;&emsp;Air&emsp;&emsp;&emsp;&emsp;Eau&emsp;&emsp;&emsp;&ensp;Verre&emsp;&emsp;&ensp;&ensp;Titane</span>
 
 				</div>
 
 				<div id="metal" style="display:none;">
 
-					<img src="iron.jpg" id = "iron" width="80" height="80" onclick="handleIndex(this.id)" class="active">
-					<img src="gold.jpg" id = "gold" width="80" height="80" onclick="handleIndex(this.id)" >
-					<img src="copper.png" id = "copper" width="80" height="80" onclick="handleIndex(this.id)">
-					<img src="aluminium.jpg" id = "aluminium" width="80" height="80" onclick="handleIndex(this.id)"></br>
+					<img src="iron.jpg" alt="Iron" id="iron" width="80" height="80" onclick="handleIndex(this.id)" class="active">
+					<img src="gold.jpg" alt="Gold" id="gold" width="80" height="80" onclick="handleIndex(this.id)" >
+					<img src="copper.png" alt="Copper" id="copper" width="80" height="80" onclick="handleIndex(this.id)">
+					<img src="aluminium.jpg" alt="Aluminium" id="aluminium" width="80" height="80" onclick="handleIndex(this.id)"></br>
+					<span>&emsp;&emsp;Fer&emsp;&emsp;&emsp;&emsp;Or&emsp;&emsp;&emsp;&ensp;Cuivre&ensp;&ensp;&nbsp;&nbsp;Aluminium</span>
 
 				</div></br>
 
 				<div id="rgbIndexDiv" style="display:none;" >
 					<p>Indice particulier : </p>
-					R : <input type="number" min ="0" max ="1" id="r" step="0.01" value="0.56"> <br>
-					G : <input type="number" min ="0" max ="1" id="g" step="0.01" value="0.57"> <br>
-					B : <input type="number" min ="0" max ="1" id="b" step="0.01" value="0.58"> <br>
+					R : <input type="number" min="0" max="1" id="r" step="0.01" value="0.56"> <br>
+					G : <input type="number" min="0" max="1" id="g" step="0.01" value="0.57"> <br>
+					B : <input type="number" min="0" max="1" id="b" step="0.01" value="0.58"> <br>
 					<button id="complexIndexButton" onclick="handleIndex(this.id)">Choisir</button></span></br>
 				</div>
 
