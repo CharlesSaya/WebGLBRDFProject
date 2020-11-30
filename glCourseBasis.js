@@ -1,4 +1,3 @@
-
 // =====================================================
 var gl;
 
@@ -10,6 +9,7 @@ var distCENTER;
 // =====================================================
 var OBJ1 = null;
 var PLANE = null;
+var SKYBOX = null;
 // =====================================================
 var choice = 3;						//Choix de BRDF
 // =====================================================
@@ -194,9 +194,6 @@ class plane {
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 
-	
-
-
 	}
 
 
@@ -220,6 +217,175 @@ class plane {
 			gl.drawArrays(gl.LINE_LOOP, 0, this.vBuffer.numItems);
 		}
 	}
+
+}
+
+
+// =====================================================
+// SKYBOX  
+// =====================================================
+
+
+class skybox{
+	constructor() {
+		this.shaderName='skybox';
+		this.loaded=-1;
+		this.shader=null;
+		this.initAll();
+		this.initTextures();
+
+	}
+
+
+	initAll() {
+
+		
+		var vertices = [
+			-1.0,-1.0,1.0,			//Back
+			1.0,-1.0,1.0,
+			1.0,1.0,1.0,
+			-1.0,1.0,1.0,
+
+			-1.0,-1.0,1.0,			//Left
+			-1.0,-1.0,-1.0,
+			-1.0,1.0,-1.0,
+			-1.0,1.0,1.0,
+
+			-1.0,-1.0,-1.0,			//Front
+			1.0,-1.0,-1.0,
+			1.0,1.0,-1.0,
+			-1.0,1.0,-1.0,
+
+			1.0,-1.0,1.0,			//Right
+			1.0,1.0,1.0,
+			1.0,1.0,-1.0,
+			1.0,-1.0,-1.0,
+
+			-1.0,1.0,-1.0,			//Top
+			-1.0,1.0,1.0,
+			1.0,1.0,1.0,
+			1.0,1.0,-1.0,
+
+			-1.0,-1.0,-1.0,			//Bottom
+			-1.0,-1.0,1.0,
+			1.0,-1.0,1.0,
+			1.0,-1.0,-1.0
+
+		];
+
+		this.vBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+		this.vBuffer.itemSize = 3;
+		this.vBuffer.numItems = 24;
+
+		var texcoords = [ 
+			0.0, 0.0,  1.0, 0.0,  1.0, 1.0,  0.0, 1.0,
+			0.0, 0.0,  1.0, 0.0,  1.0, 1.0,  0.0, 1.0,
+			0.0, 0.0,  1.0, 0.0,  1.0, 1.0,  0.0, 1.0,
+			0.0, 0.0,  1.0, 0.0,  1.0, 1.0,  0.0, 1.0,
+			0.0, 0.0,  1.0, 0.0,  1.0, 1.0,  0.0, 1.0,
+			0.0, 0.0,  1.0, 0.0,  1.0, 1.0,  0.0, 1.0
+		];
+
+		
+
+		this.tBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.tBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texcoords), gl.STATIC_DRAW);
+		this.tBuffer.itemSize = 2;
+		this.tBuffer.numItems = 24;
+
+
+		// Index buffer (array)
+		var indices = [ 
+			0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8, 10, 11,
+			12, 13, 14, 12, 14, 15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23
+		];
+		this.indexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+		this.indexBuffer.itemSize = 1;
+		this.indexBuffer.numItems = indices.length;
+
+
+		loadShaders(this);
+	}
+
+	initTextures(){
+		var faces = ["/textures/gloomy_skybox/gloomy_ft.png",
+					 "/textures/gloomy_skybox/gloomy_lf.png",	
+				   	 "/textures/gloomy_skybox/gloomy_bk.png",
+				 	 "/textures/gloomy_skybox/gloomy_rt.png",
+					 "/textures/gloomy_skybox/gloomy_dn.png",
+					 "/textures/gloomy_skybox/gloomy_up.png"];
+
+		var texture = gl.createTexture();
+		// gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+		gl.bindTexture(gl.GL_TEXTURE_CUBE_MAP, texture);
+		 
+
+		for(var i=0; i< faces.length;i++){
+
+			var texImage = new Image();
+			texImage.src = faces[i];
+
+			texImage.onload = function () {
+				texture.image = texImage;
+				gl.texImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+
+			}
+		}
+
+		gl.texParameteri(gl.GL_TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.GL_TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.GL_TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE);
+		gl.texParameteri(gl.GL_TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE);
+		
+	}
+	
+	
+	// --------------------------------------------
+	setShadersParams() {
+		gl.useProgram(this.shader);
+
+		this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
+		gl.enableVertexAttribArray(this.shader.vAttrib);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
+		gl.vertexAttribPointer(this.shader.vAttrib, this.vBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+		this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTexCoords");
+		gl.enableVertexAttribArray(this.shader.tAttrib);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.tBuffer);
+		gl.vertexAttribPointer(this.shader.tAttrib,this.tBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
+		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
+
+	}
+
+
+	// --------------------------------------------
+	setMatrixUniforms() {
+			mat4.identity(mvMatrix);
+			mat4.translate(mvMatrix, distCENTER);
+			mat4.multiply(mvMatrix, rotMatrix);
+			gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
+			gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);	
+
+	}
+
+	// --------------------------------------------
+	draw() {
+		if(this.shader && this.loaded==4) {		
+			this.setShadersParams();
+			this.setMatrixUniforms(this);
+			
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+			gl.drawElements(gl.TRIANGLES, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+		}
+	}
+
 
 }
 
@@ -347,6 +513,7 @@ function webGLStart() {
 	
 	PLANE = new plane();
 	OBJ1 = new objmesh('bunny.obj');
+	SKYBOX = new skybox();
 	
 	tick();
 }
@@ -377,8 +544,9 @@ function convertHexLight(hex){
 function drawScene() {
 
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	PLANE.draw();
-	OBJ1.draw();
+	//PLANE.draw();
+	//OBJ1.draw();
+	SKYBOX.draw();
 }
 
 	
