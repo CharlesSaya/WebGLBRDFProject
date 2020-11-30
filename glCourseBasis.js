@@ -311,40 +311,37 @@ class skybox{
 	}
 
 	initTextures(){
-		var faces = ["/textures/gloomy_skybox/gloomy_rt.png",
-					 "/textures/gloomy_skybox/gloomy_lf.png",	
-				   	 "/textures/gloomy_skybox/gloomy_up.png",
-				 	 "/textures/gloomy_skybox/gloomy_dn.png",
-					 "/textures/gloomy_skybox/gloomy_bk.png",
-					 "/textures/gloomy_skybox/gloomy_ft.png"];
+		var faces = ["textures/gloomy_skybox/gloomy_rt.png",
+					 "textures/gloomy_skybox/gloomy_lf.png",	
+				   	 "textures/gloomy_skybox/gloomy_up.png",
+				 	 "textures/gloomy_skybox/gloomy_dn.png",
+					 "textures/gloomy_skybox/gloomy_bk.png",
+					 "textures/gloomy_skybox/gloomy_ft.png"];
 
 
-		var images = [new Image(),new Image(),new Image(),new Image(),new Image(),new Image()]
+		//var images = [new Image(),new Image(),new Image(),new Image(),new Image(),new Image()]
 
 		var texture = gl.createTexture();		 
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
 
 		for(var i=0; i< faces.length;i++){
 
-			
-			images[i].src = faces[i];
-			texture.image = images[i];
+			var image = new Image();
+			image.src = faces[i];
+			texture.image = image;
 
-			images[i].onload = function () {
+			image.onload = function () {
 				gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-				
-				gl.bindTexture(gl.GL_TEXTURE_CUBE_MAP, texture);
-				gl.texImage2D(gl.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
-				gl.texParameteri(gl.GL_TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-				gl.texParameteri(gl.GL_TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-				gl.texParameteri(gl.GL_TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE);
-				gl.texParameteri(gl.GL_TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE);
-		
+				gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+				gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+				gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 			}
-
-
 		}
+		gl.activeTexture(gl.TEXTURE0);
 
-		
+
 	}
 	
 	
@@ -376,7 +373,6 @@ class skybox{
 			mat4.multiply(mvMatrix, rotMatrix);
 			gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 			gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
-			gl.uniform1i(this.shader.skybox, 0); 
 
 	}
 
@@ -385,7 +381,7 @@ class skybox{
 		if(this.shader && this.loaded==4) {		
 			this.setShadersParams();
 			this.setMatrixUniforms(this);
-			gl.activeTexture(gl.TEXTURE0);
+			gl.uniform1i(this.shader.skybox, 0); 
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 			gl.drawElements(gl.TRIANGLES, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 		}
