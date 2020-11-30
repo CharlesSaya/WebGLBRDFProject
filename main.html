@@ -111,6 +111,20 @@
 			<span> <img src="maj.png" width="24" height="24"/> + <img src="mouse1.png" width="24" height="24"/> + <img src="deplacement.png" width="24" height="24"/> : Modifier la position de la cam&eacute;ra sur l'axe Cam&eacute;ra-Objet </span><br/>
 			<span> <img src="ctrl.png" width="24" height="24"/> + <img src="mouse1.png" width="24" height="24"/> + <img src="deplacement.png" width="24" height="24"/> : Modifier la position (X,Y) de la lumi&egrave;re dans le rep&egrave;re Cam&eacute;ra </span><br/>
 		</div>
+		<div class="box" id="otherParameters">
+			<h3>Choix de l'objet</h3>
+			<input type="radio" id="objectChoice1"
+			 name="object" class="objectChoice" value="Bunny" checked>
+			<label for="objectChoice1">Bunny</label>
+		
+			<input type="radio" id="objectChoice2"
+			 name="object" class="objectChoice" value="Verre">
+			<label for="objectChoice2">Verre</label>
+		
+			<input type="radio" id="objectChoice3"
+			 name="object" class="objectChoice" value="Sphere">
+			<label for="objectChoice3">Sphere</label>
+		</div>
 	</div>
 
 	<!-- scripts -->
@@ -139,6 +153,9 @@
 						var valof = $(this).val();
 						$('.'+$(this).attr("id")).text(valof);
 				});
+			});
+			$('input:radio[name="object"]').change(function(){
+				handleObject($(this).val());
 			});
 		});
 	  </script>

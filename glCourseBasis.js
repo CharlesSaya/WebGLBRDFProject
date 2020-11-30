@@ -429,7 +429,8 @@ loadObjFile = function(OBJ3D)
 		}
 	}
 
-	xhttp.open("GET", "bunny.obj", true);
+
+	xhttp.open("GET", OBJ3D.objName, true);
 	xhttp.send();
 }
 

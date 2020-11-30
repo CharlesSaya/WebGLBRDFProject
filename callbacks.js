@@ -201,6 +201,27 @@ function handleIndex(indexId){
 	document.getElementById("b").value = rgbIndex[2];
 	document.getElementById("simpleIndex").value = index;
 }
+// =====================================================
+
+/*
+ *	Fonction permettant de choisir l'indice de réfraction que l'on souhaite pour la BRDF Cook-Torrance
+ */
+
+function handleObject(ObjectValue){
+	console.log(ObjectValue);
+	switch(ObjectValue){
+		case "Bunny":
+			OBJ1 = new objmesh("bunny.obj");
+			break;
+		case "Verre":
+			OBJ1 = new objmesh("verre.obj");
+			break;
+		default:
+			OBJ1 = new objmesh("sphere.obj");
+			break;
+	}
+
+}
 
 // =====================================================
 function handleMouseMove(event) {

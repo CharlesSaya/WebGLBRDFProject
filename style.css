@@ -16,7 +16,7 @@
 
 #other_settings{
     position: absolute;
-    top: 180px;
+    top: 380px;
     width: 530px;
     padding: 5px;
     background-color: rgba(120, 120, 120, 0.5);
@@ -33,6 +33,17 @@
     background-color: rgba(120, 120, 120, 0.5);
     border: 1px solid rgba(120, 120, 120, 0.2);
     border-radius: 10px;
+
+}
+
+#otherParameters{
+  position: absolute;
+  top: 180px;
+  width: 530px;
+  padding: 5px;
+  background-color: rgba(120, 120, 120, 0.5);
+  border: 1px solid rgba(120, 120, 120, 0.2);
+  border-radius: 10px;
 
 }
 
