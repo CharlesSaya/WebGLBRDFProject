@@ -211,7 +211,7 @@ function handleObject(ObjectValue){
 	console.log(ObjectValue);
 	switch(ObjectValue){
 		case "Bunny":
-			OBJ1 = new objmesh("bunny.obj");
+			OBJ1 = new objmesh("bunnyRot.obj");
 			break;
 		case "Verre":
 			OBJ1 = new objmesh("verre.obj");

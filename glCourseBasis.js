@@ -312,12 +312,13 @@ class skybox{
 	}
 
 	initTextures(){
-		var faces = ["textures/night/px.png",
-					 "textures/night/nx.png",	
-				   	 "textures/night/py.png",
-				 	 "textures/night/ny.png",
-					 "textures/night/pz.png",
-					 "textures/night/nz.png"];
+		var name = "tunnel";
+		var faces = ["textures/"+ name +"/px.png",
+					 "textures/"+ name +"/nx.png",	
+				   	 "textures/"+ name +"/py.png",
+				 	 "textures/"+ name +"/ny.png",
+					 "textures/"+ name +"/pz.png",
+					 "textures/"+ name +"/nz.png"];
 
 		var texture = gl.createTexture();		 
 		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
