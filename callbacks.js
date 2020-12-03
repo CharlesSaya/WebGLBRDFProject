@@ -208,7 +208,6 @@ function handleIndex(indexId){
  */
 
 function handleObject(ObjectValue){
-	console.log(ObjectValue);
 	switch(ObjectValue){
 		case "Bunny":
 			OBJ1 = new objmesh("bunnyRot.obj");
@@ -229,16 +228,21 @@ function handleObject(ObjectValue){
  */
 
 function handleCubeMap(ObjectValue){
-	console.log(ObjectValue);
+	document.getElementById("night").className = "";
+	document.getElementById("tunnel").className = "";
+	document.getElementById("church").className = "";
 	switch(ObjectValue){
 		case "night":
 			texture_name = "night";
+			document.getElementById("night").className = "active";
 			break;
 		case "tunnel":
 			texture_name = "tunnel";
+			document.getElementById("tunnel").className = "active";
 			break;
 		default:
 			texture_name = "church";
+			document.getElementById("church").className = "active";
 			break;
 	}
 	SKYBOX.initTextures();

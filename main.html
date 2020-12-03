@@ -127,17 +127,10 @@
 		</div>
 		<div class="box" id="TextureCubeMap">
 			<h3>Choix de la texture du CubeMap</h3>
-			<input type="radio" id="cubeMapChoice1"
-			 name="cubeMap" class="cubeMapChoice" value="church" checked>
-			<label for="cubeMapChoice1">church</label>
-		
-			<input type="radio" id="cubeMapChoice2"
-			 name="cubeMap" class="cubeMapChoice" value="night">
-			<label for="cubeMapChoice2">night</label>
-		
-			<input type="radio" id="cubeMapChoice3"
-			 name="cubeMap" class="cubeMapChoice" value="tunnel">
-			<label for="cubeMapChoice3">tunnel</label>
+			<img src="textures/church/px.png" alt="church" id="church" width="80" height="80" onclick="handleCubeMap(this.id)" class="active">
+			<img src="textures/night/px.png" alt="night" id="night" width="80" height="80" onclick="handleCubeMap(this.id)" >
+			<img src="textures/tunnel/px.png" alt="tunnel" id="tunnel" width="80" height="80" onclick="handleCubeMap(this.id)"><br>
+			<span>&emsp;Church&emsp;&emsp;&ensp;&nbsp;Night&emsp;&emsp;&ensp;Tunnel&ensp;&ensp;&nbsp;</span>
 		</div>
 	</div>
 
