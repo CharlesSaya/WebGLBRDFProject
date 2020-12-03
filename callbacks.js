@@ -8,7 +8,7 @@ var lastMouseX = null;
 var lastMouseY = null;
 var handleLight = false;
 var rotY = 0;
-var rotX = -1;
+var rotX = -0;
 
 // =====================================================
 window.requestAnimFrame = (function()
@@ -242,12 +242,13 @@ function handleMouseMove(event) {
 			distCENTER[2] += deltaY/100.0;
 		} else {														//Controle de la position de la caméra en rotation autour du point (0,0,0)
 
-			rotY += degToRad(deltaX / 5);
+			rotY += degToRad(deltaX /5);
 			rotX += degToRad(deltaY / 5);
 
 			mat4.identity(rotMatrix);
 			mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
-			mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
+			mat4.rotate(rotMatrix, rotY, [0, 1, 0]);
+
 		}
 		
 		lastMouseX = newX;

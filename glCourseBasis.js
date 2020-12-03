@@ -5,6 +5,7 @@ var gl;
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 var rotMatrix = mat4.create();
+var boxRotMatrix = mat4.create();
 var distCENTER;
 // =====================================================
 var OBJ1 = null;
@@ -212,7 +213,7 @@ class plane {
 		if(this.shader && this.loaded==4) {		
 			this.setShadersParams();
 			this.setMatrixUniforms(this);
-			
+		
 			gl.drawArrays(gl.TRIANGLE_FAN, 0, this.vBuffer.numItems);
 			gl.drawArrays(gl.LINE_LOOP, 0, this.vBuffer.numItems);
 		}
@@ -239,37 +240,37 @@ class skybox{
 
 	initAll() {
 
-		
+		var size = 10.0;
 		var vertices = [
-			-1.0,-1.0,1.0,			//Top
-			-1.0,1.0,1.0,
-			1.0,1.0,1.0,
-			1.0,-1.0,1.0,
+			-size,-size,size,			//Top
+			-size,size,size,
+			size,size,size,
+			size,-size,size,
 
-			-1.0,-1.0,1.0,			//Left
-			-1.0,-1.0,-1.0,
-			-1.0,1.0,-1.0,
-			-1.0,1.0,1.0,
+			-size,-size,size,			//Left
+			-size,-size,-size,
+			-size,size,-size,
+			-size,size,size,
 
-			-1.0,-1.0,-1.0,			//Bottom
-			1.0,-1.0,-1.0,
-			1.0,1.0,-1.0,
-			-1.0,1.0,-1.0,
+			-size,-size,-size,			//Bottom
+			size,-size,-size,
+			size,size,-size,
+			-size,size,-size,
 
-			1.0,-1.0,1.0,			//Right
-			1.0,1.0,1.0,
-			1.0,1.0,-1.0,
-			1.0,-1.0,-1.0,
+			size,-size,size,			//Right
+			size,size,size,
+			size,size,-size,
+			size,-size,-size,
 
-			-1.0,1.0,-1.0,			//Front
-			1.0,1.0,-1.0,
-			1.0,1.0,1.0,
-			-1.0,1.0,1.0,
+			-size,size,-size,			//Front
+			size,size,-size,
+			size,size,size,
+			-size,size,size,
 
-			-1.0,-1.0,-1.0,			//Back
-			-1.0,-1.0,1.0,
-			1.0,-1.0,1.0,
-			1.0,-1.0,-1.0
+			-size,-size,-size,			//Back
+			-size,-size,size,
+			size,-size,size,
+			size,-size,-size
 
 		];
 
@@ -311,34 +312,30 @@ class skybox{
 	}
 
 	initTextures(){
-		var faces = ["textures/gloomy_skybox/gloomy_rt.png",
-					 "textures/gloomy_skybox/gloomy_lf.png",	
-				   	 "textures/gloomy_skybox/gloomy_up.png",
-				 	 "textures/gloomy_skybox/gloomy_dn.png",
-					 "textures/gloomy_skybox/gloomy_bk.png",
-					 "textures/gloomy_skybox/gloomy_ft.png"];
-
-
-		//var images = [new Image(),new Image(),new Image(),new Image(),new Image(),new Image()]
+		var faces = ["textures/night/px.png",
+					 "textures/night/nx.png",	
+				   	 "textures/night/py.png",
+				 	 "textures/night/ny.png",
+					 "textures/night/pz.png",
+					 "textures/night/nz.png"];
 
 		var texture = gl.createTexture();		 
 		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
 
-		for(var i=0; i< faces.length;i++){
+		var images = [new Image(),new Image(),new Image(),new Image(),new Image(),new Image()]
 
-			var image = new Image();
-			image.src = faces[i];
-			texture.image = image;
-
-			image.onload = function () {
-				gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-				gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
-				gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-				gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-				gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-				gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		for(let i=0; i< 6 ;i++){
+			
+			images[i].src = faces[i];
+			images[i].onload = function () {
+				gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X +i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,images[i]);
 			}
 		}
+
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 		gl.activeTexture(gl.TEXTURE0);
 
 
@@ -365,14 +362,18 @@ class skybox{
 
 	}
 
+	// --------------------------------------------
+	setUniforms(){
+		gl.uniform1i(this.shader.skybox, 0); 
+	}
 
 	// --------------------------------------------
 	setMatrixUniforms() {
-			mat4.identity(mvMatrix);
-			mat4.translate(mvMatrix, distCENTER);
-			mat4.multiply(mvMatrix, rotMatrix);
-			gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
-			gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
+		mat4.identity(mvMatrix);
+		mat4.translate(mvMatrix, distCENTER);
+		mat4.multiply(mvMatrix, rotMatrix);
+		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
+		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 
 	}
 
@@ -381,7 +382,7 @@ class skybox{
 		if(this.shader && this.loaded==4) {		
 			this.setShadersParams();
 			this.setMatrixUniforms(this);
-			gl.uniform1i(this.shader.skybox, 0); 
+			this.setUniforms(this);
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 			gl.drawElements(gl.TRIANGLES, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 		}
@@ -511,10 +512,13 @@ function webGLStart() {
 	mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
 	mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
 
+
+
+	
 	distCENTER = vec3.create([0,-0.2,-3]);
 	
 	PLANE = new plane();
-	OBJ1 = new objmesh('bunny.obj');
+	OBJ1 = new objmesh('bunnyRot.obj');
 	SKYBOX = new skybox();
 	
 	tick();
@@ -547,7 +551,7 @@ function drawScene() {
 
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	//PLANE.draw();
-	//OBJ1.draw();
+	OBJ1.draw();
 	SKYBOX.draw();
 }
 
