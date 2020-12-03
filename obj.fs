@@ -23,6 +23,10 @@ uniform float uRefractiveIndex;			//Indice de réfraction simple
 uniform vec3 uRGBRefractiveIndex;		//Indice de réfraction complexe
 
 //=====================================================
+uniform samplerCube skybox;
+ 
+
+//=====================================================
 const float M_PI = 3.14159265358;
 
 // =====================================================
@@ -127,7 +131,7 @@ vec3 cook_torrance_with_simple_index(float kd, float ks, vec3 color, vec3 wi, ve
 	float d = beckmann(dot_nh, rugosity);										//terme de distribution
 	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni, dot_oh, dot_ih);		//terme de géométrie
 
-	return  (1.0-f)/M_PI * uColor +  (f * g * d /(4.0*dot_ni*dot_no));
+	return  (1.0-f)/M_PI * color +  (f * g * d /(4.0*dot_ni*dot_no));
 }
 
 // =====================================================
@@ -166,19 +170,23 @@ void main(void)
 	vec3 wi = normalize(uLightPos - vec3(pos3D));
 	vec3 wo = normalize(- vec3(pos3D));							//caméra en (0,0,0)
 
+	vec3 reflectedRay = normalize(reflect(-wi,N));
+
 	float dot_ni = max(dot(N,wi),0.0);	
 	
+	vec3 color = textureCube(skybox,reflectedRay).xyz;
+
 	if(uChoice==0)																													
-			col =  uLightPower * uLightColor * lambert(uColor,uKd,N,wi);																				//lambert
+			col =  uLightPower * uLightColor * lambert(color,uKd,N,wi);																				//lambert
 
 	else if (uChoice == 1)																
-			col =  uLightPower * uLightColor * phong(uKd, uKs, uColor,wi,wo,N,uShineCoeff) * dot_ni ;													//phong normalisé
+			col =  uLightPower * uLightColor * phong(uKd, uKs, color,wi,wo,N,uShineCoeff) * dot_ni ;													//phong normalisé
 			
 	else if(uChoice == 2)
-			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, uColor, wi, wo, N, uRGBRefractiveIndex,uRugosity) * dot_ni;	//Cook-Torrance indices complexes
+			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, color, wi, wo, N, uRGBRefractiveIndex,uRugosity) * dot_ni;	//Cook-Torrance indices complexes
 
 	else																		
-			col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, uColor,wi,wo,N,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices simples
+			col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,N,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices simples
 
 	gl_FragColor = vec4(col,1.0);
 }

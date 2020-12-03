@@ -20,6 +20,8 @@ var yLightPos = 0.0;				//Position y de la lumière
 var index = 1.00027;					//Indice de réfraction simple (par defaut : Vide)
 var rgbIndex = [0.56,0.57,0.58];	//Indice de réfraction complexe (par defaut : Fer)
 
+var texture_name = "church";
+
 // =====================================================
 // OBJET 3D, lecture fichier obj
 // =====================================================
@@ -36,6 +38,39 @@ class objmesh {
 		
 		loadObjFile(this);
 		loadShaders(this);
+		this.initTextures();
+	}
+
+	// --------------------------------------------
+
+	initTextures(){
+		var faces = ["textures/"+ texture_name +"/px.png",
+					 "textures/"+ texture_name +"/nx.png",	
+				   	 "textures/"+ texture_name +"/py.png",
+				 	 "textures/"+ texture_name +"/ny.png",
+					 "textures/"+ texture_name +"/pz.png",
+					 "textures/"+ texture_name +"/nz.png"];
+
+		var texture = gl.createTexture();		 
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+
+		var images = [new Image(),new Image(),new Image(),new Image(),new Image(),new Image()]
+
+		for(let i=0; i< 6 ;i++){
+			
+			images[i].src = faces[i];
+			images[i].onload = function () {
+				gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X +i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,images[i]);
+			}
+		}
+
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.activeTexture(gl.TEXTURE0);
+
+
 	}
 
 	// --------------------------------------------
@@ -72,6 +107,9 @@ class objmesh {
 		this.shader.rgbRefractiveIndex = gl.getUniformLocation(this.shader, "uRGBRefractiveIndex");
 
 		this.shader.choice = gl.getUniformLocation(this.shader, "uChoice");
+
+		this.shader.skybox = gl.getUniformLocation(this.shader, "skybox"); 
+
 
 	}
 	
@@ -113,6 +151,8 @@ class objmesh {
 		gl.uniform3fv(this.shader.rgbRefractiveIndex,rgbIndex);
 
 		gl.uniform1i(this.shader.choice,choice);
+
+		gl.uniform1i(this.shader.skybox, 0); 
 
 
 	}
@@ -312,13 +352,12 @@ class skybox{
 	}
 
 	initTextures(){
-		var name = "tunnel";
-		var faces = ["textures/"+ name +"/px.png",
-					 "textures/"+ name +"/nx.png",	
-				   	 "textures/"+ name +"/py.png",
-				 	 "textures/"+ name +"/ny.png",
-					 "textures/"+ name +"/pz.png",
-					 "textures/"+ name +"/nz.png"];
+		var faces = ["textures/"+ texture_name +"/px.png",
+					 "textures/"+ texture_name +"/nx.png",	
+				   	 "textures/"+ texture_name +"/py.png",
+				 	 "textures/"+ texture_name +"/ny.png",
+					 "textures/"+ texture_name +"/pz.png",
+					 "textures/"+ texture_name +"/nz.png"];
 
 		var texture = gl.createTexture();		 
 		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
