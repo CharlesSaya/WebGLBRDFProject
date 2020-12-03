@@ -204,7 +204,7 @@ function handleIndex(indexId){
 // =====================================================
 
 /*
- *	Fonction permettant de choisir l'indice de réfraction que l'on souhaite pour la BRDF Cook-Torrance
+ *	Fonction permettant de choisir l'objet à afficher dans la scène
  */
 
 function handleObject(ObjectValue){
@@ -220,6 +220,28 @@ function handleObject(ObjectValue){
 			OBJ1 = new objmesh("sphere.obj");
 			break;
 	}
+
+}
+// =====================================================
+
+/*
+ *	Fonction permettant de choisir la texture du Cube Map
+ */
+
+function handleCubeMap(ObjectValue){
+	console.log(ObjectValue);
+	switch(ObjectValue){
+		case "night":
+			texture_name = "night";
+			break;
+		case "tunnel":
+			texture_name = "tunnel";
+			break;
+		default:
+			texture_name = "church";
+			break;
+	}
+	SKYBOX.initTextures();
 
 }
 

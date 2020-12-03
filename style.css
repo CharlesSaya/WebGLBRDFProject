@@ -47,6 +47,17 @@
 
 }
 
+#TextureCubeMap{
+  position: absolute;
+  top: 280px;
+  width: 530px;
+  padding: 5px;
+  background-color: rgba(120, 120, 120, 0.5);
+  border: 1px solid rgba(120, 120, 120, 0.2);
+  border-radius: 10px;
+
+}
+
 .active{
   opacity: 0.5;
   border: 2px solid rgba(50, 50, 50, 1);

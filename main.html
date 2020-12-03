@@ -125,6 +125,20 @@
 			 name="object" class="objectChoice" value="Sphere">
 			<label for="objectChoice3">Sphere</label>
 		</div>
+		<div class="box" id="TextureCubeMap">
+			<h3>Choix de la texture du CubeMap</h3>
+			<input type="radio" id="cubeMapChoice1"
+			 name="cubeMap" class="cubeMapChoice" value="church" checked>
+			<label for="cubeMapChoice1">church</label>
+		
+			<input type="radio" id="cubeMapChoice2"
+			 name="cubeMap" class="cubeMapChoice" value="night">
+			<label for="cubeMapChoice2">night</label>
+		
+			<input type="radio" id="cubeMapChoice3"
+			 name="cubeMap" class="cubeMapChoice" value="tunnel">
+			<label for="cubeMapChoice3">tunnel</label>
+		</div>
 	</div>
 
 	<!-- scripts -->
@@ -154,8 +168,13 @@
 						$('.'+$(this).attr("id")).text(valof);
 				});
 			});
+			//modification de l'objet affiché dans la scène
 			$('input:radio[name="object"]').change(function(){
 				handleObject($(this).val());
+			});
+			//modification de la texture du Cube Map
+			$('input:radio[name="cubeMap"]').change(function(){
+				handleCubeMap($(this).val());
 			});
 		});
 	  </script>
