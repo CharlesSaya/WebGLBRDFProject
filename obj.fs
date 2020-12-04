@@ -182,7 +182,7 @@ void main(void)
 	vec3 vr = refract(vo,N2, 1.0/uRefractiveIndex);
 	vr = vec3(invRMatrix * vec4(vr, 1.0));
 
-	vec3 color = textureCube(skybox, vi.xzy).xyz; // slider a faire
+	vec3 color = textureCube(skybox, vi).xyz * 0.0 + textureCube(skybox, vr).xyz * 0.9; // slider a faire
 
 
 	// vec3 Nview2 = normalize(Nview);
