@@ -215,6 +215,9 @@ function handleObject(ObjectValue){
 		case "Verre":
 			OBJ1 = new objmesh("verre.obj");
 			break;
+		case "cube":
+			OBJ1 = new objmesh("cube.obj");
+			break;
 		default:
 			OBJ1 = new objmesh("sphere.obj");
 			break;

@@ -3,6 +3,7 @@ precision mediump float;
 
 varying vec4 pos3D;						//Position 3D du point
 varying vec3 N;							//Normale 
+varying mat4 invRMatrix;
 
 uniform int uChoice;					//Choix de la BRDF
 
@@ -170,23 +171,44 @@ void main(void)
 	vec3 wi = normalize(uLightPos - vec3(pos3D));
 	vec3 wo = normalize(- vec3(pos3D));							//caméra en (0,0,0)
 
-	vec3 reflectedRay = normalize(reflect(-wi,N));
+	vec3 N2 = normalize(N);
 
-	float dot_ni = max(dot(N,wi),0.0);	
 	
-	vec3 color = textureCube(skybox,reflectedRay).xyz;
+	vec3 vo = normalize(vec3(pos3D));
+	vec3 vi = reflect(vo,N2);
+	vi = vec3(invRMatrix * vec4(vi, 1.0));
+
+	
+	vec3 vr = refract(vo,N2, 1.0/uRefractiveIndex);
+	vr = vec3(invRMatrix * vec4(vr, 1.0));
+
+	vec3 color = textureCube(skybox, vi).xyz * 0.0 + textureCube(skybox, vr).xyz * 0.9; // slider a faire
+
+
+	// vec3 Nview2 = normalize(Nview);
+
+	// vec3 reflectedRay = normalize(reflect(-wo,Nview2));
+
+	float dot_ni = max(dot(N2,wi),0.0);	
+	
+	// vec3 color = textureCube(skybox,reflectedRay).xyz;
 
 	if(uChoice==0)																													
-			col =  uLightPower * uLightColor * lambert(color,uKd,N,wi);																				//lambert
+			col =  uLightPower * uLightColor * lambert(color,uKd,N2,wi);																				//lambert
 
 	else if (uChoice == 1)																
-			col =  uLightPower * uLightColor * phong(uKd, uKs, color,wi,wo,N,uShineCoeff) * dot_ni ;													//phong normalisé
+			col =  uLightPower * uLightColor * phong(uKd, uKs, color,wi,wo,N2,uShineCoeff) * dot_ni ;													//phong normalisé
 			
 	else if(uChoice == 2)
-			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, color, wi, wo, N, uRGBRefractiveIndex,uRugosity) * dot_ni;	//Cook-Torrance indices complexes
+			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, color, wi, wo, N2, uRGBRefractiveIndex,uRugosity) * dot_ni;	//Cook-Torrance indices complexes
 
 	else																		
-			col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,N,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices simples
+			col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,N2,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices simples
+
+
+
+
+
 
 	gl_FragColor = vec4(col,1.0);
 }
