@@ -7,7 +7,7 @@ varying vec3 pos;
 
 void main(void)
 {
-    gl_FragColor = textureCube(skybox,pos);
+    gl_FragColor = textureCube(skybox,pos.xzy);
     //gl_FragColor = vec4(texCoords,0.0,1.0);
 }
 

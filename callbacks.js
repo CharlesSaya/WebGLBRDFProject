@@ -8,7 +8,7 @@ var lastMouseX = null;
 var lastMouseY = null;
 var handleLight = false;
 var rotY = 0;
-var rotX = -0;
+var rotX = -1;
 
 // =====================================================
 window.requestAnimFrame = (function()
@@ -210,10 +210,13 @@ function handleIndex(indexId){
 function handleObject(ObjectValue){
 	switch(ObjectValue){
 		case "Bunny":
-			OBJ1 = new objmesh("bunnyRot.obj");
+			OBJ1 = new objmesh("bunny.obj");
 			break;
 		case "Verre":
 			OBJ1 = new objmesh("verre.obj");
+			break;
+		case "cube":
+			OBJ1 = new objmesh("cube.obj");
 			break;
 		default:
 			OBJ1 = new objmesh("sphere.obj");
@@ -273,7 +276,7 @@ function handleMouseMove(event) {
 
 			mat4.identity(rotMatrix);
 			mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
-			mat4.rotate(rotMatrix, rotY, [0, 1, 0]);
+			mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
 
 		}
 		
