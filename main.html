@@ -63,6 +63,7 @@
 			<div id="mode_choice">
 				<button id="scook_torranceButton" onclick="handleButton(this.id)" disabled>Cook-Torrance (r&eacute;fraction simple)</button>
 				<button id="rcook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance (r&eacute;fraction complexe)</button>
+				<button id="EIcook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance (Echantillonnage d'importance)</button>
 				<button id="phongButton" onclick="handleButton(this.id)">Phong</button>
 				<button id="lambertButton" onclick="handleButton(this.id)">Lambert</button>
 			</div> <br> <br>
@@ -103,6 +104,11 @@
 					<input type="number" min ="1" max ="10" id="simpleIndex" step="0.00001" value="1">
 					<button id="simpleIndexButton" onclick="handleIndex(this.id)">Choisir</button><br>
 				</div>
+
+				<div id="EchantillonnageDiv">
+					<p>Nombre de rayon d'échantillonnage : <span class="nbRayEchant"></span></label></p>
+					<input type="range" min="1" max="2000" value="500" class="slider" id="nbRayEchant"><br><br>
+				</div>
 			</div>
 		</div>
 		<div class="box" id="commands">
@@ -119,7 +125,7 @@
 		
 			<input type="radio" id="objectChoice2"
 			 name="object" class="objectChoice" value="Verre">
-			<label for="objectChoice2">Verre</label>cube
+			<label for="objectChoice2">Verre</label>
 		
 			<input type="radio" id="objectChoice3"
 			 name="object" class="objectChoice" value="Sphere">

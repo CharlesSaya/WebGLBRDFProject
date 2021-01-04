@@ -21,7 +21,8 @@ uniform float uRugosity;				//Rugosité de l'objet
 
 //=====================================================
 uniform float uRefractiveIndex;			//Indice de réfraction simple
-uniform vec3 uRGBRefractiveIndex;		//Indice de réfraction complexe
+uniform vec3 uRGBRefractiveIndex;		//Indice de réfraction complexeu
+uniform float uNbEchantillonnage;		//Nombre de rayons pour l'echantillonnage d'importance
 
 //=====================================================
 uniform samplerCube skybox;
@@ -110,24 +111,6 @@ float beckmann(float dot_nh, float rugosity ){
 // =====================================================
 
 /*
- *  Fonction calculant le terme de distribution de la BRDF avec Beckmann anisotrope
- */
-
-
-float beckmann_EchantImp(float cosTm, float cosPhim, float rugosity ){
-	float cosTm2 = cosTm * cosTm;
-	float sinTm2 = 1.0 - cosTm2;
-	float tanTm2 = sinTm2 / cosTm2;
-	float cosPhim2 = cosPhim * cosPhim;
-	float sinPhim2 = 1.0 - cosPhim2;
-	float a = exp(-tanTm2 * (cosPhim2 / (rugosity * rugosity) + sinPhim2 / (rugosity * rugosity)));
-	float b = M_PI * rugosity * rugosity * cosTm2 * cosTm2;
-	return a/b;
-}
-
-// =====================================================
-
-/*
  *  Fonction calculant le terme de masquage de la BRDF avec Torrance-Sparrow
  */
 
@@ -192,31 +175,42 @@ vec3 cook_torrance_with_complex_index(float kd, float ks, vec3 color, vec3 wi, v
 
 vec3 Echantillonnage_Importance(float kd, float ks, vec3 color, vec3 wi, vec3 wo, vec3 normale, float refractiveIndex, float rugosity){
 
-	const float N = 1000.0;
+	const float N = 1000.;
 	vec3 halfVector =  normalize((wi+wo));	
-	float dot_nh =  max(0.0,dot(normale,halfVector));
-	float dot_ni =  max(0.0,dot(wi,normale));
-	vec3 S = vec3(0.);
+	float dot_oh =  max(0.0,dot(wo,halfVector));
+	vec3 S = vec3(0.0);
 	float E1, E2;
-	for(float i = 1.0 ; i < N; i++){
+	float i = 1.0;
+	for(float i = 1.0 ; i <= N; i++){
+		if(i > uNbEchantillonnage)
+			break;
 		E1 = rand();
 		E2 = rand();
-
+		
 		float PhiM = E1 * 2. * M_PI;
-		float Tan2ThetaM = sqrt(- (rugosity * rugosity) * log(1. - E2));
+		float logE2 = log(1. - E2);
+		if (2. * logE2 == logE2 && logE2 != 0.) logE2 = 0.;
+		float Tan2ThetaM =  - (rugosity * rugosity) * logE2;
 		float cosTheta = 1. / sqrt(1. + Tan2ThetaM);
-		float sinTheta = sqrt(max(0., 1. - cosTheta * cosTheta));
+		float sinTheta = sqrt(1. - cosTheta * cosTheta);
 
-		vec3 halfVector = vec3(sinTheta * cos(PhiM),  sinTheta * sin(PhiM), cosTheta);
+		vec3 halfVector = vec3(sinTheta * cos(PhiM),  sinTheta * sin(PhiM), cosTheta) * normale;
+		if(dot(wo, halfVector) < 0.) halfVector = -halfVector;
 		vec3 wi2 = reflect(wo,halfVector);
+		
 
-		vec3 col = uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi2,wo,normale,uRefractiveIndex,uRugosity) * dot_ni;
-		float pdf = beckmann_EchantImp(cosTheta, cos(PhiM), rugosity) * dot_nh;
+		if(dot(wo, wi2) >= 0.) {
+			float dot_ni =  max(0.0,dot(wi2,normale));
+			float dot_nh =  max(0.0,dot(normale,halfVector));
 
-		S += vec3(col.x/pdf, col.y/pdf, col.z/pdf);
+			vec3 col = uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi2,wo,normale,uRefractiveIndex,uRugosity) * cosTheta;
+			float pdf =  beckmann(cosTheta, rugosity) * cosTheta / (4. * dot(wo, halfVector));
+
+			S += vec3(col.x/pdf, col.y/pdf, col.z/pdf);
+		}
+		
 	}
-
-	return  S / N; 
+	return (S / uNbEchantillonnage); 
 }
 
 
@@ -262,10 +256,13 @@ void main(void)
 			
 	else if(uChoice == 2)
 			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, color, wi, wo, N2, uRGBRefractiveIndex,uRugosity) * dot_ni;	//Cook-Torrance indices complexes
-
-	else{																		
-			//col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,N2,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices simples
-			col = Echantillonnage_Importance(uKd, uKs, color, wi, wo, N2, uRefractiveIndex, uRugosity);
+	
+	else if(uChoice == 3)
+			col =  Echantillonnage_Importance(uKd, uKs, color, wi, wo, N2, uRefractiveIndex, uRugosity);												//Cook-Torrance echantillonnage d'importance
+	
+	else{		
+			col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,N2,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices simples
+		
 	}
 
 

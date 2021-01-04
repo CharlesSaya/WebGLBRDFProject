@@ -85,6 +85,7 @@ function handleButton(clicked_button){
 	dielectric.style.display = "none";
 	metal.style.display = "none";
 
+	document.getElementById("EIcook_torranceButton").disabled = false;
 	document.getElementById("scook_torranceButton").disabled = false;
 	document.getElementById("rcook_torranceButton").disabled = false;
 	document.getElementById("phongButton").disabled = false;
@@ -93,6 +94,16 @@ function handleButton(clicked_button){
 	//Modification de différents éléments selon le choix effectue
 	switch(clicked_button){
 		case "scook_torranceButton":
+			node0.style.display = "inline";
+			node2.style.display = "inline";
+			node5.style.display = "inline";
+
+			dielectric.style.display = "inline";
+
+			document.getElementById(clicked_button).disabled = true;
+			choice = 4;
+			break;
+		case "EIcook_torranceButton":
 			node0.style.display = "inline";
 			node2.style.display = "inline";
 			node5.style.display = "inline";
