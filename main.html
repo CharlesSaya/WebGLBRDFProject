@@ -61,8 +61,9 @@
 		<div class="box" id="other_settings" >
 			<h3>Autres param&egrave;tres</h3>
 			<div id="mode_choice">
-				<button id="scook_torranceButton" onclick="handleButton(this.id)" disabled>Cook-Torrance (r&eacute;fraction simple)</button>
-				<button id="rcook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance (r&eacute;fraction complexe)</button>
+				<button id="scook_torranceButton" onclick="handleButton(this.id)" disabled>Cook-Torrance (r&eacute;fractions dielectriques)</button>
+				<button id="rcook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance (r&eacute;fractions m&eacute;taux)</button>
+				<button id="EIcook_torranceButton" onclick="handleButton(this.id)">Cook-Torrance (Echantillonnage d'importance)</button>
 				<button id="phongButton" onclick="handleButton(this.id)">Phong</button>
 				<button id="lambertButton" onclick="handleButton(this.id)">Lambert</button>
 			</div> <br> <br>
@@ -72,20 +73,20 @@
 
 				<div id="dielectric">
 
-					<img src="air.png" alt="Air" id="air" width="80" height="80" onclick="handleIndex(this.id)" class="active">
-					<img src="water.jpg" alt="Water" id="water" width="80" height="80" onclick="handleIndex(this.id)">
-					<img src="verre.jpg" alt="Glass" id="glass" width="80" height="80" onclick="handleIndex(this.id)">
-					<img src="titane.jpg" alt="Titane" id="titane" width="80" height="80" onclick="handleIndex(this.id)"><br>
+					<img src="images/air.png" alt="Air" id="air" width="80" height="80" onclick="handleIndex(this.id)" class="active">
+					<img src="images/water.jpg" alt="Water" id="water" width="80" height="80" onclick="handleIndex(this.id)">
+					<img src="images/verre.jpg" alt="Glass" id="glass" width="80" height="80" onclick="handleIndex(this.id)">
+					<img src="images/titane.jpg" alt="Titane" id="titane" width="80" height="80" onclick="handleIndex(this.id)"><br>
 					<span>&ensp;&emsp;Air&emsp;&emsp;&emsp;&emsp;Eau&emsp;&emsp;&emsp;&ensp;Verre&emsp;&emsp;&ensp;&ensp;Titane</span>
 
 				</div>
 
 				<div id="metal" style="display:none;">
 
-					<img src="iron.jpg" alt="Iron" id="iron" width="80" height="80" onclick="handleIndex(this.id)" class="active">
-					<img src="gold.jpg" alt="Gold" id="gold" width="80" height="80" onclick="handleIndex(this.id)" >
-					<img src="copper.png" alt="Copper" id="copper" width="80" height="80" onclick="handleIndex(this.id)">
-					<img src="aluminium.jpg" alt="Aluminium" id="aluminium" width="80" height="80" onclick="handleIndex(this.id)"></br>
+					<img src="images/iron.jpg" alt="Iron" id="iron" width="80" height="80" onclick="handleIndex(this.id)" class="active">
+					<img src="images/gold.jpg" alt="Gold" id="gold" width="80" height="80" onclick="handleIndex(this.id)" >
+					<img src="images/copper.png" alt="Copper" id="copper" width="80" height="80" onclick="handleIndex(this.id)">
+					<img src="images/aluminium.jpg" alt="Aluminium" id="aluminium" width="80" height="80" onclick="handleIndex(this.id)"></br>
 					<span>&emsp;&emsp;Fer&emsp;&emsp;&emsp;&emsp;Or&emsp;&emsp;&emsp;&ensp;Cuivre&ensp;&ensp;&nbsp;&nbsp;Aluminium</span>
 
 				</div></br>
@@ -103,13 +104,25 @@
 					<input type="number" min ="1" max ="10" id="simpleIndex" step="0.00001" value="1">
 					<button id="simpleIndexButton" onclick="handleIndex(this.id)">Choisir</button><br>
 				</div>
+
+				<div id="EchantillonnageDiv"  style="display:none;">
+					<p>Nombre de rayon d'echantillonnage : <span class="nbRayEchant"></span></label></p>
+					<input type="range" min="1" max="2000" value="500" class="slider" id="nbRayEchant"><br><br>
+				</div>
+
+				<div id="reflRefrAmount" >	
+					<label for="reflRefr">Reflection = <span id="reflection">..loading..</span> , Refraction = <span id="refraction">..loading..</span> </label> <br />	
+					<input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" id="reflRefr"><br><br>
+				</div>
+
+
 			</div>
 		</div>
 		<div class="box" id="commands">
 			<h3>Commandes</h3>
-			<span> <img src="mouse1.png" width="24" height="24"/> + <img src="deplacement.png" width="24" height="24"/> : Modifier la position de la cam&eacute;ra autour de l'objet </span><br/>
-			<span> <img src="maj.png" width="24" height="24"/> + <img src="mouse1.png" width="24" height="24"/> + <img src="deplacement.png" width="24" height="24"/> : Modifier la position de la cam&eacute;ra sur l'axe Cam&eacute;ra-Objet </span><br/>
-			<span> <img src="ctrl.png" width="24" height="24"/> + <img src="mouse1.png" width="24" height="24"/> + <img src="deplacement.png" width="24" height="24"/> : Modifier la position (X,Y) de la lumi&egrave;re dans le rep&egrave;re Cam&eacute;ra </span><br/>
+			<span> <img src="images/mouse1.png" width="24" height="24"/> + <img src="images/deplacement.png" width="24" height="24"/> : Modifier la position de la cam&eacute;ra autour de l'objet </span><br/>
+			<span> <img src="images/maj.png" width="24" height="24"/> + <img src="images/mouse1.png" width="24" height="24"/> + <img src="images/deplacement.png" width="24" height="24"/> : Modifier la position de la cam&eacute;ra sur l'axe Cam&eacute;ra-Objet </span><br/>
+			<span> <img src="images/ctrl.png" width="24" height="24"/> + <img src="images/mouse1.png" width="24" height="24"/> + <img src="images/deplacement.png" width="24" height="24"/> : Modifier la position (X,Y) de la lumi&egrave;re dans le rep&egrave;re Cam&eacute;ra </span><br/>
 		</div>
 		<div class="box" id="otherParameters">
 			<h3>Choix de l'objet</h3>
@@ -119,7 +132,7 @@
 		
 			<input type="radio" id="objectChoice2"
 			 name="object" class="objectChoice" value="Verre">
-			<label for="objectChoice2">Verre</label>cube
+			<label for="objectChoice2">Verre</label>
 		
 			<input type="radio" id="objectChoice3"
 			 name="object" class="objectChoice" value="Sphere">

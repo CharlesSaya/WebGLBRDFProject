@@ -12,7 +12,7 @@ var OBJ1 = null;
 var PLANE = null;
 var SKYBOX = null;
 // =====================================================
-var choice = 3;						//Choix de BRDF
+var choice = 4;						//Choix de BRDF
 // =====================================================
 var xLightPos = 0.0;				//Position x de la lumière			
 var yLightPos = 0.0;				//Position y de la lumière	
@@ -105,6 +105,11 @@ class objmesh {
 
 		this.shader.refractiveIndex = gl.getUniformLocation(this.shader, "uRefractiveIndex");
 		this.shader.rgbRefractiveIndex = gl.getUniformLocation(this.shader, "uRGBRefractiveIndex");
+		this.shader.nbEchantillonnage = gl.getUniformLocation(this.shader, "uNbEchantillonnage");
+		this.shader.time = gl.getUniformLocation(this.shader, "u_Time");
+
+		this.shader.reflAmount = gl.getUniformLocation(this.shader, "uReflectionAmount");		
+		this.shader.refrAmount = gl.getUniformLocation(this.shader, "uRefractionAmount");
 
 		this.shader.choice = gl.getUniformLocation(this.shader, "uChoice");
 
@@ -118,6 +123,7 @@ class objmesh {
 
 		var zLightPos = document.getElementById("zPos").value;
 		var lightPower = document.getElementById("power").value;
+		var nbRayEchantillonnage = document.getElementById("nbRayEchant").value;
 		var lightColor = convertHexLight(document.getElementById("LightColor").value);
 		var color = convertHex(document.getElementById("color").value);	
 
@@ -127,6 +133,10 @@ class objmesh {
 		var rugosity = document.getElementById("rugosity").value;
 		var shineCoeff = document.getElementById("shineCoeff").value;
 
+		var reflAmount = document.getElementById("reflRefr").value;
+		var refrAmount = Math.round((1.0 - reflAmount) * 100) / 100; 	;
+		document.getElementById("reflection").innerText = reflAmount;
+		document.getElementById("refraction").innerText = refrAmount;
 
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, distCENTER);
@@ -149,6 +159,15 @@ class objmesh {
 
 		gl.uniform1f(this.shader.refractiveIndex,index);
 		gl.uniform3fv(this.shader.rgbRefractiveIndex,rgbIndex);
+		gl.uniform1f(this.shader.nbEchantillonnage,nbRayEchantillonnage);
+	
+		var d = new Date();
+		var time = d.getTime();
+		gl.uniform1f(this.shader.time,time);
+
+		gl.uniform1f(this.shader.reflAmount,reflAmount);
+		gl.uniform1f(this.shader.refrAmount,refrAmount);
+
 
 		gl.uniform1i(this.shader.choice,choice);
 
@@ -558,7 +577,7 @@ function webGLStart() {
 	distCENTER = vec3.create([0,-0.2,-3]);
 	
 	PLANE = new plane();
-	OBJ1 = new objmesh('bunnyRot.obj');
+	OBJ1 = new objmesh('objects/bunny.obj');
 	SKYBOX = new skybox();
 	
 	tick();

@@ -16,8 +16,8 @@
 
 #other_settings{
     position: absolute;
-    top: 480px;
-    width: 530px;
+    top: 465px;
+    width: 560px;
     padding: 5px;
     background-color: rgba(120, 120, 120, 0.5);
     border: 1px solid rgba(120, 120, 120, 0.2);
@@ -28,7 +28,7 @@
 #commands{
     position: absolute;
     top: 20px;
-    width: 530px;
+    width: 560px;
     padding: 5px;
     background-color: rgba(120, 120, 120, 0.5);
     border: 1px solid rgba(120, 120, 120, 0.2);
@@ -39,7 +39,7 @@
 #otherParameters{
   position: absolute;
   top: 180px;
-  width: 530px;
+  width: 560px;
   padding: 5px;
   background-color: rgba(120, 120, 120, 0.5);
   border: 1px solid rgba(120, 120, 120, 0.2);
@@ -50,7 +50,7 @@
 #TextureCubeMap{
   position: absolute;
   top: 280px;
-  width: 530px;
+  width: 560px;
   padding: 5px;
   background-color: rgba(120, 120, 120, 0.5);
   border: 1px solid rgba(120, 120, 120, 0.2);

@@ -70,6 +70,8 @@ function handleButton(clicked_button){
 
 	node4 = document.getElementById("rgbIndexDiv");
 	node5 = document.getElementById("simpleIndexDiv");
+	node6 = document.getElementById("EchantillonnageDiv");
+	node7 = document.getElementById("reflRefrAmount");
 
 	metal = document.getElementById("metal");
 	dielectric = document.getElementById("dielectric");
@@ -81,10 +83,13 @@ function handleButton(clicked_button){
 	node3.style.display = "none";
 	node4.style.display = "none";
 	node5.style.display = "none";
+	node6.style.display = "none";
+	node7.style.display = "none";
 
 	dielectric.style.display = "none";
 	metal.style.display = "none";
 
+	document.getElementById("EIcook_torranceButton").disabled = false;
 	document.getElementById("scook_torranceButton").disabled = false;
 	document.getElementById("rcook_torranceButton").disabled = false;
 	document.getElementById("phongButton").disabled = false;
@@ -96,6 +101,18 @@ function handleButton(clicked_button){
 			node0.style.display = "inline";
 			node2.style.display = "inline";
 			node5.style.display = "inline";
+			node7.style.display = "inline";
+
+			dielectric.style.display = "inline";
+
+			document.getElementById(clicked_button).disabled = true;
+			choice = 4;
+			break;
+		case "EIcook_torranceButton":
+			node0.style.display = "inline";
+			node2.style.display = "inline";
+			node5.style.display = "inline";
+			node6.style.display = "inline";
 
 			dielectric.style.display = "inline";
 
@@ -210,16 +227,16 @@ function handleIndex(indexId){
 function handleObject(ObjectValue){
 	switch(ObjectValue){
 		case "Bunny":
-			OBJ1 = new objmesh("bunny.obj");
+			OBJ1 = new objmesh("objects/bunny.obj");
 			break;
 		case "Verre":
-			OBJ1 = new objmesh("verre.obj");
+			OBJ1 = new objmesh("objects/verre.obj");
 			break;
 		case "cube":
-			OBJ1 = new objmesh("cube.obj");
+			OBJ1 = new objmesh("objects/cube.obj");
 			break;
 		default:
-			OBJ1 = new objmesh("sphere.obj");
+			OBJ1 = new objmesh("objects/sphere.obj");
 			break;
 	}
 

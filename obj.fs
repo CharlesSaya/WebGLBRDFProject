@@ -21,7 +21,11 @@ uniform float uRugosity;				//Rugosité de l'objet
 
 //=====================================================
 uniform float uRefractiveIndex;			//Indice de réfraction simple
-uniform vec3 uRGBRefractiveIndex;		//Indice de réfraction complexe
+uniform vec3 uRGBRefractiveIndex;		//Indice de réfraction complexeu
+uniform float uNbEchantillonnage;		//Nombre de rayons pour l'echantillonnage d'importance
+uniform float u_Time;
+uniform float uReflectionAmount;		//Montant de reflection 
+uniform float uRefractionAmount;		//Montant de refraction
 
 //=====================================================
 uniform samplerCube skybox;
@@ -32,13 +36,20 @@ const float M_PI = 3.14159265358;
 
 
 /*
- *  random Function
+ *  Random Function
  */
 //=====================================================
-float rand(){
-    return fract(sin(dot(pos3D.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
 
+
+highp float rand(float i)
+{
+    highp float a = 12.9898;
+    highp float b = 78.233;
+    highp float c = 43758.5453;
+    highp float dt= dot(pos3D.xy+i ,vec2(a,b));
+    highp float sn= mod(dt,3.14);
+    return fract(sin(sn) * c);
+}
 // =====================================================
 
 /*
@@ -107,8 +118,6 @@ float beckmann(float dot_nh, float rugosity ){
 	return a/b;
 }
 
-
-
 // =====================================================
 
 /*
@@ -171,54 +180,43 @@ vec3 cook_torrance_with_complex_index(float kd, float ks, vec3 color, vec3 wi, v
 // =====================================================
 
 /*
- *  Fonction calculant le terme de distribution de la BRDF avec Beckmann anisotrope
- */
-
-
-float beckmann_EchantImp(float cosTm, float sinTheta, float rugosity ){
-	float cosTm2 = cosTm * cosTm;
-	float sinTm2 = 1.0 - cosTm2;
-	float tanTm2 = sinTm2 / cosTm2;	
-	float a = exp(-tanTm2 / ((rugosity * rugosity)));
-	float b =  rugosity * rugosity * cosTm2 * cosTm;
-	return (2.0*sinTheta/b) * a;
-}
-
-// =====================================================
-
-/*
  *  Fonction echantillonnage d'importance
  */
 
 vec3 Echantillonnage_Importance(float kd, float ks, vec3 color, vec3 wi, vec3 wo, vec3 normale, float refractiveIndex, float rugosity){
 
-	const float N = 1000.0;
-	vec3 halfVector =  normalize((wi+wo));	
-	float dot_nh =  max(0.0,dot(normale,halfVector));
-	float dot_ni =  max(0.0,dot(wi,normale));
+	const float N = 100000.0;
 	vec3 S = vec3(0.0);
 	float E1, E2;
-	for(float i = 1.0 ; i < N; i++){
-		E1 = rand();
-		E2 = rand();
+	for(float i = 1.0 ; i <= N; i++){
 
+		if(i > uNbEchantillonnage)
+			 break;
+
+		E1 = rand(i);
+		E2 = rand(i);
+		
 		float PhiM = E1 * 2. * M_PI;
-		float thetaM = atan(sqrt(- (rugosity * rugosity) * log(1. - E2)));
+		float logE2 = log(1. - E2);
+		
+		float tanThetaM =  sqrt(-(rugosity * rugosity) * logE2);
+		float tanThetaM2 = tanThetaM * tanThetaM;
+		float cosThetaM = 1.0/(1.0+tanThetaM2);
+		float sinThetaM = tanThetaM2 / (1.0+tanThetaM2);
+		float cosPhiM = cos(PhiM);
+		float sinPhiM = sin(PhiM);
 
-		float cosTheta = cos(thetaM);
-		float sinTheta = sin(thetaM);
+		vec3 normaleM = vec3(sinThetaM * cosPhiM,  sinThetaM * sinPhiM, cosThetaM);
 
-		vec3 sampling = normalize(vec3(sinTheta * cos(PhiM),  sinTheta * sin(PhiM), cosTheta));
-		vec3 wi2 = normalize(reflect(wo,sampling));
 
-		vec3 col = uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,sampling ,uRefractiveIndex,uRugosity) * dot_ni;
-		float pdf = beckmann_EchantImp(thetaM, sinTheta, rugosity);
-		pdf/=(4.0*(dot(wo,wi2)));
+		vec3 col = uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,normaleM,uRefractiveIndex,uRugosity) * cosThetaM;
 
-		S += vec3(col.x/pdf, col.y/pdf, col.z/pdf);
+		float pdf =  beckmann(cosThetaM, rugosity) * cosThetaM;
+
+		S += col/pdf;	
+
 	}
-
-	return  S / N; 
+	return (S / uNbEchantillonnage); 
 }
 
 
@@ -241,18 +239,14 @@ void main(void)
 	vec3 vi = reflect(vo,N2);
 	vi = vec3(invRMatrix * vec4(vi, 1.0));
 
+	vec3 vr = refract(vo,N2, 1.0/uRefractiveIndex);
+    vr = vec3(invRMatrix * vec4(vr, 1.0));
 
-
-	vec3 color = textureCube(skybox, vi.xzy).xyz; // slider a faire
-
-
-	// vec3 Nview2 = normalize(Nview);
-
-	// vec3 reflectedRay = normalize(reflect(-wo,Nview2));
 
 	float dot_ni = max(dot(N2,wi),0.0);	
-	
-	// vec3 color = textureCube(skybox,reflectedRay).xyz;
+	vec3 color = textureCube(skybox, vi.xzy).xyz;
+
+
 
 	if(uChoice==0)																													
 			col =  uLightPower * uLightColor * lambert(color,uKd,N2,wi);																				//lambert
@@ -261,11 +255,16 @@ void main(void)
 			col =  uLightPower * uLightColor * phong(uKd, uKs, color,wi,wo,N2,uShineCoeff) * dot_ni ;													//phong normalisé
 			
 	else if(uChoice == 2)
+	
 			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, color, wi, wo, N2, uRGBRefractiveIndex,uRugosity) * dot_ni;	//Cook-Torrance indices complexes
-
-	else{																		
-			//col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,N2,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices simples
-			col = Echantillonnage_Importance(uKd, uKs, color, wi, wo, N2, uRefractiveIndex, uRugosity);
+	
+	else if(uChoice == 3){
+			col =  Echantillonnage_Importance(uKd, uKs, color, wi, wo, N2, uRefractiveIndex, uRugosity);												//Cook-Torrance echantillonnage d'importance
+	
+	}else{		
+			color = uReflectionAmount * textureCube(skybox, vi.xzy).xyz + uRefractionAmount *  textureCube(skybox, vr.xzy).xyz;
+			col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,N2,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices simples
+		
 	}
 
 
