@@ -23,7 +23,7 @@ uniform float uRugosity;				//Rugosité de l'objet
 uniform float uRefractiveIndex;			//Indice de réfraction simple
 uniform vec3 uRGBRefractiveIndex;		//Indice de réfraction complexeu
 uniform float uNbEchantillonnage;		//Nombre de rayons pour l'echantillonnage d'importance
-uniform float u_Time;
+uniform float u_Time;				
 uniform float uReflectionAmount;		//Montant de reflection 
 uniform float uRefractionAmount;		//Montant de refraction
 
@@ -147,7 +147,7 @@ vec3 cook_torrance_with_simple_index(float kd, float ks, vec3 color, vec3 wi, ve
 	float dot_oh =  max(0.0,dot(wo,halfVector));		
 	float dot_ih =  max(0.0,dot(wi,halfVector));						
 
-	float f = fresnel(dot_ih, refractiveIndex);									//valeur de fresnel avec indice de réfraction simples
+	float f = fresnel(dot_ih, refractiveIndex);									//valeur de fresnel avec indice de réfraction dielectriques
 	float d = beckmann(dot_nh, rugosity);										//terme de distribution
 	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni, dot_oh, dot_ih);		//terme de géométrie
 
@@ -157,7 +157,7 @@ vec3 cook_torrance_with_simple_index(float kd, float ks, vec3 color, vec3 wi, ve
 // =====================================================
 
 /*
- *  Fonction calculant la BRDF avec des indices de refraction complexes (prenant en compte plusieurs longueurs d'ondes)
+ *  Fonction calculant la BRDF avec des indices de refraction des métaux(prenant en compte plusieurs longueurs d'ondes)
  */
 
 vec3 cook_torrance_with_complex_index(float kd, float ks, vec3 color, vec3 wi, vec3 wo, vec3 normale, vec3 refractiveIndex, float rugosity){
@@ -170,7 +170,7 @@ vec3 cook_torrance_with_complex_index(float kd, float ks, vec3 color, vec3 wi, v
 	float dot_oh =  max(0.0,dot(wo,halfVector));		
 	float dot_ih =  max(0.0,dot(wi,halfVector));
 
-	vec3  f = fresnel_schlick(dot_ih, refractiveIndex);							//valeur de fresnel avec indice de réfraction complexes
+	vec3  f = fresnel_schlick(dot_ih, refractiveIndex);							//valeur de fresnel avec indice de réfraction de métaux
 	float d = beckmann(dot_nh, rugosity);										//terme de distribution
 	float g = gaf_torrance_sparrow(dot_nh, dot_no, dot_ni, dot_oh, dot_ih);		//terme de géométrie
 
@@ -256,14 +256,14 @@ void main(void)
 			
 	else if(uChoice == 2)
 	
-			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, color, wi, wo, N2, uRGBRefractiveIndex,uRugosity) * dot_ni;	//Cook-Torrance indices complexes
+			col =  uLightPower * uLightColor * cook_torrance_with_complex_index(uKd, uKs, color, wi, wo, N2, uRGBRefractiveIndex,uRugosity) * dot_ni;	//Cook-Torrance indices métaux
 	
 	else if(uChoice == 3){
 			col =  Echantillonnage_Importance(uKd, uKs, color, wi, wo, N2, uRefractiveIndex, uRugosity);												//Cook-Torrance echantillonnage d'importance
 	
 	}else{		
 			color = uReflectionAmount * textureCube(skybox, vi.xzy).xyz + uRefractionAmount *  textureCube(skybox, vr.xzy).xyz;
-			col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,N2,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices simples
+			col =  uLightPower * uLightColor * cook_torrance_with_simple_index(uKd, uKs, color,wi,wo,N2,uRefractiveIndex,uRugosity) * dot_ni;			//Cook-Torrance indices dielectriques
 		
 	}
 
